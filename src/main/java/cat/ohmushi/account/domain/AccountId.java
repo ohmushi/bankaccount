@@ -9,6 +9,9 @@ public class AccountId {
     
     private AccountId(String value) {
         this.value = Objects.requireNonNull(value).trim().toLowerCase();
+        if(this.value.isEmpty()) {
+            throw new IllegalArgumentException("Tried to create an id with empty value");
+        }
     }
 
     public static AccountId of(String id) {

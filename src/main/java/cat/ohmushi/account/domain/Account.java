@@ -1,5 +1,7 @@
 package cat.ohmushi.account.domain;
 
+import javax.security.auth.login.AccountException;
+
 @DomainEntity
 public class Account {
 
@@ -11,7 +13,10 @@ public class Account {
         this.balance = balance;
     }
 
-    public static Account create(AccountId id, Money balance) {
+    public static Account create(AccountId id, Money balance) throws AccountException {
+        if(!balance.isStrictlyPositive()) {
+            throw new AccountException("Cannot create an account with a strictly negative balance.");
+        }
         return new Account(id, balance);
     }
 }

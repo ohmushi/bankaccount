@@ -15,4 +15,8 @@ public class Money {
         return new Money(amount);
     }
 
+    boolean isStrictlyPositive() {
+        return this.amount.intValue() >= 0;
+    }
+
 }
