@@ -15,8 +15,16 @@ public class Money {
         return new Money(amount);
     }
 
+    public BigDecimal amount() {
+        return this.amount;
+    }
+
     boolean isStrictlyPositive() {
         return this.amount.intValue() >= 0;
+    }
+
+    public Money add(Money added) {
+        return Money.of(this.amount.add(added.amount()));
     }
 
 }
