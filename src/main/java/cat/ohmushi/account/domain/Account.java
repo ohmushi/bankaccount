@@ -1,5 +1,7 @@
 package cat.ohmushi.account.domain;
 
+import cat.ohmushi.account.domain.AccountException.DepositException;
+
 @DomainEntity
 public class Account {
 
@@ -12,7 +14,7 @@ public class Account {
     }
 
     public static Account create(AccountId id, Money balance) throws AccountException {
-        if(!balance.isStrictlyPositive()) {
+        if(!balance.isZeroOrPositive()) {
             throw new AccountException("Cannot create an account with a strictly negative balance.");
         }
         return new Account(id, balance);
@@ -22,7 +24,11 @@ public class Account {
         return this.balance;
     }
 
-    public void deposit(Money amount) {
-        this.balance = this.balance.add(amount);
+    public void deposit(Money amount) throws DepositException {
+        if(amount.isZeroOrPositive()) {
+            this.balance = this.balance.add(amount);
+        } else {
+            throw new DepositException("Money transferred cannot be negative.");
+        }
     }
 }

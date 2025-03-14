@@ -32,8 +32,8 @@ public class AcountTest {
     }
 
     @Test
-    void shouldCreateAccount() {
-        assertDoesNotThrow(() -> Account.create(exampleId, Money.of(BigDecimal.valueOf(0))));
+    void shouldCreateAccountWithZeroBalance() {
+        assertDoesNotThrow(() -> Account.create(exampleId, Money.of(BigDecimal.ZERO)));
     }
 
     @Test
@@ -47,5 +47,20 @@ public class AcountTest {
     void shoulDepositMoneyInAccount() {
         accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(25)));
         assertThat(accountWithTenEuros.balance().amount()).isEqualTo(BigDecimal.valueOf(10 + 25));
+    }
+
+    @Test
+    void shoulDepositZero() {
+        accountWithTenEuros.deposit(Money.of(BigDecimal.ZERO));
+        assertThat(accountWithTenEuros.balance().amount()).isEqualTo(BigDecimal.valueOf(10));
+    }
+
+    @Test
+    void shoulNotDepositStrictlyNegativeAmount() {
+        Exception throwed = assertThrows(
+            AccountException.DepositException.class, 
+            () -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1)))
+        );
+        assertThat(throwed).hasMessage("Money transferred cannot be negative.");
     }
 }

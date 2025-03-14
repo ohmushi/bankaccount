@@ -6,7 +6,7 @@ public class AccountException extends RuntimeException {
         super(msg);
     }
 
-    static class DepositException extends AccountException {
+    public static class DepositException extends AccountException {
         public DepositException(String msg) {
             super(msg);
         }

@@ -19,7 +19,7 @@ public class Money {
         return this.amount;
     }
 
-    boolean isStrictlyPositive() {
+    boolean isZeroOrPositive() {
         return this.amount.intValue() >= 0;
     }
 
