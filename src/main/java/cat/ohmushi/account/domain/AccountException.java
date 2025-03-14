@@ -11,4 +11,10 @@ public class AccountException extends RuntimeException {
             super(msg);
         }
     }
+
+    public static class WithdrawException extends AccountException {
+        public WithdrawException(String msg) {
+            super(msg);
+        }
+    }
 }

@@ -23,8 +23,16 @@ public class Money {
         return this.amount.intValue() >= 0;
     }
 
+    boolean isStrictlyPositive() {
+        return this.amount.intValue() > 0;
+    }
+
     public Money add(Money added) {
         return Money.of(this.amount.add(added.amount()));
+    }
+
+    public Money minus(Money amount) {
+        return Money.of(this.amount.subtract(amount.amount()));
     }
 
 }

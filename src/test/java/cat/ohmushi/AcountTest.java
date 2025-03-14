@@ -50,9 +50,12 @@ public class AcountTest {
     }
 
     @Test
-    void shoulDepositZero() {
-        accountWithTenEuros.deposit(Money.of(BigDecimal.ZERO));
-        assertThat(accountWithTenEuros.balance().amount()).isEqualTo(BigDecimal.valueOf(10));
+    void shoulNotDepositZero() {
+        Exception throwed = assertThrows(
+            AccountException.DepositException.class, 
+            () -> accountWithTenEuros.deposit(Money.of(BigDecimal.ZERO))
+        );
+        assertThat(throwed).hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
@@ -60,6 +63,30 @@ public class AcountTest {
         Exception throwed = assertThrows(
             AccountException.DepositException.class, 
             () -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1)))
+        );
+        assertThat(throwed).hasMessage("Money transferred cannot be negative.");
+    }
+
+    @Test
+    void shoulWithdraw() {
+        accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(25)));
+        assertThat(accountWithTenEuros.balance().amount()).isEqualTo(BigDecimal.valueOf(10 - 25));
+    }
+
+    @Test
+    void shoulNotWithdrawZero() {
+        Exception throwed = assertThrows(
+            AccountException.WithdrawException.class, 
+            () -> accountWithTenEuros.withdraw(Money.of(BigDecimal.ZERO))
+        );
+        assertThat(throwed).hasMessage("Money transferred cannot be negative.");
+    }
+
+    @Test
+    void shoulNotWithdrawStrictlyNegativeAmount() {
+        Exception throwed = assertThrows(
+            AccountException.WithdrawException.class, 
+            () -> accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1)))
         );
         assertThat(throwed).hasMessage("Money transferred cannot be negative.");
     }
