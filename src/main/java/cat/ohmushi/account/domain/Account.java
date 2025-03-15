@@ -2,6 +2,7 @@ package cat.ohmushi.account.domain;
 
 import cat.ohmushi.account.domain.AccountException.DepositException;
 import cat.ohmushi.account.domain.AccountException.WithdrawException;
+import cat.ohmushi.shared.annotations.DomainEntity;
 
 @DomainEntity
 public class Account {
@@ -26,18 +27,18 @@ public class Account {
     }
 
     public void deposit(Money amount) throws DepositException {
-        if(amount.isStrictlyPositive()) {
-            this.balance = this.balance.add(amount);
-        } else {
-            throw new DepositException("Money transferred cannot be negative.");
+        if(!amount.isStrictlyPositive()) {
+            throw AccountException.deposit("Money transferred cannot be negative.");
         }
+
+        this.balance = this.balance.add(amount);
     }
 
     public void withdraw(Money amount) throws WithdrawException {
-        if(amount.isStrictlyPositive()) {
-            this.balance = this.balance.minus(amount);
-        } else {
-            throw new WithdrawException("Money transferred cannot be negative.");
+        if(!amount.isStrictlyPositive()) {
+            throw AccountException.withdrawal("Money transferred cannot be negative.");
         }
+
+        this.balance = this.balance.minus(amount);
     }
 }

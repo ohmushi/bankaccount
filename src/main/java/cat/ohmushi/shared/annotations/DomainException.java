@@ -1,4 +1,4 @@
-package cat.ohmushi.account.domain;
+package cat.ohmushi.shared.annotations;
 
 public @interface DomainException {
 

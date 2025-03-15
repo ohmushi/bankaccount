@@ -90,4 +90,6 @@ public class AcountTest {
         );
         assertThat(throwed).hasMessage("Money transferred cannot be negative.");
     }
+
+    
 }
