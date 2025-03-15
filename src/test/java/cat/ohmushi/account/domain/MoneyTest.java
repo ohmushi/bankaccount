@@ -1,12 +1,10 @@
-package cat.ohmushi;
+package cat.ohmushi.account.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
-
-import cat.ohmushi.account.domain.Money;
 
 public class MoneyTest {
 

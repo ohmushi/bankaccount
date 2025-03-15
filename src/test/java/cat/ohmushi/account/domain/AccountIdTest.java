@@ -1,12 +1,10 @@
-package cat.ohmushi;
+package cat.ohmushi.account.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import cat.ohmushi.account.domain.AccountId;
-
-public class AccountIdTest {
+final class AccountIdTest {
     @Test
     void shouldCreateAccountId() {
         assertThat(AccountId.of("id")).isNotEmpty();

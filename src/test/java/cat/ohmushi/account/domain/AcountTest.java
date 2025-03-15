@@ -1,4 +1,4 @@
-package cat.ohmushi;
+package cat.ohmushi.account.domain;
 
 import java.math.BigDecimal;
 
@@ -8,16 +8,11 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import cat.ohmushi.account.domain.Account;
-import cat.ohmushi.account.domain.AccountException;
-import cat.ohmushi.account.domain.AccountId;
-import cat.ohmushi.account.domain.Money;
-
 public class AcountTest {
 
     private final static AccountId exampleId = AccountId.of("id").get();
-    private static Money tenEuros = Money.of(10).get();
-    private static Money zeroEuros = Money.of(0).get();
+    private final static Money tenEuros = Money.of(10).get();
+    private final static Money zeroEuros = Money.of(0).get();
     private static Account accountWithTenEuros = getAccountWithTenEuros();
 
     private static Account getAccountWithTenEuros() {

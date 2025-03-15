@@ -1,14 +1,13 @@
 package cat.ohmushi.account.domain;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import cat.ohmushi.account.domain.AccountException.DepositException;
 import cat.ohmushi.account.domain.AccountException.WithdrawException;
 import cat.ohmushi.shared.annotations.DomainEntity;
 
 @DomainEntity
-public class Account {
+public final class Account {
 
     private final AccountId id;
     private Money balance;

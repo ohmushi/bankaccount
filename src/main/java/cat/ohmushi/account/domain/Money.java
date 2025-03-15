@@ -8,7 +8,7 @@ import cat.ohmushi.account.domain.MoneyException.CreationMoneyException;
 import cat.ohmushi.shared.annotations.Value;
 
 @Value
-public class Money {
+final class Money {
 
     private final BigDecimal amount;
 

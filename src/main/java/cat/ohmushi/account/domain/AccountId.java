@@ -6,7 +6,7 @@ import java.util.Optional;
 import cat.ohmushi.shared.annotations.DomainEntityId;
 
 @DomainEntityId
-public class AccountId {
+final class AccountId {
 
     private final String value;
     
