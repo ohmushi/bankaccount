@@ -1,6 +1,7 @@
 package cat.ohmushi.account.domain;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import cat.ohmushi.shared.annotations.DomainEntityId;
 
@@ -9,15 +10,23 @@ public class AccountId {
 
     private final String value;
     
-    private AccountId(String value) {
-        this.value = Objects.requireNonNull(value).trim().toLowerCase();
-        if(this.value.isEmpty()) {
-            throw new IllegalArgumentException("Tried to create an id with empty value");
+    private AccountId(String value) throws AccountException {
+        try {
+            this.value = Objects.requireNonNull(value).trim().toLowerCase();
+            if(this.value.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+        } catch (Exception e) {
+            throw new AccountException("Cannot create an id with null or empty value.");
         }
     }
 
-    public static AccountId of(String id) {
-        return new AccountId(id);
+    public static Optional<AccountId> of(String id) {
+        try {
+            return Optional.of(new AccountId(id));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     @Override

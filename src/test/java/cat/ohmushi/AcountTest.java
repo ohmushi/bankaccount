@@ -3,8 +3,8 @@ package cat.ohmushi;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,12 +15,14 @@ import cat.ohmushi.account.domain.Money;
 
 public class AcountTest {
 
-    private final static AccountId exampleId = AccountId.of("id");
+    private final static AccountId exampleId = AccountId.of("id").get();
+    private static Money tenEuros = Money.of(10).get();
+    private static Money zeroEuros = Money.of(0).get();
     private static Account accountWithTenEuros = getAccountWithTenEuros();
 
     private static Account getAccountWithTenEuros() {
         try {
-            return Account.create(exampleId, Money.of(BigDecimal.valueOf(10)));
+            return Account.create(exampleId, tenEuros);
         } catch (AccountException ex) {
             return null;
         }
@@ -33,63 +35,63 @@ public class AcountTest {
 
     @Test
     void shouldCreateAccountWithZeroBalance() {
-        assertDoesNotThrow(() -> Account.create(exampleId, Money.of(BigDecimal.ZERO)));
+        assertThatNoException()
+            .isThrownBy(() -> Account.create(exampleId, zeroEuros));
     }
 
     @Test
     void shouldNotCreateAccountWithNegativeBalance() {
-        final var negativeBalance = Money.of(BigDecimal.valueOf(-1));
-        Exception throwed = assertThrows(AccountException.class, () -> Account.create(exampleId, negativeBalance));
-        assertThat(throwed).hasMessage("Cannot create an account with a strictly negative balance.");
+        final var negativeBalance = Money.of(BigDecimal.valueOf(-1)).get();
+        assertThatThrownBy(() -> Account.create(exampleId, negativeBalance))
+            .isInstanceOf(AccountException.class)
+            .hasMessage("Cannot create an account with a strictly negative balance.");
     }
 
     @Test
     void shoulDepositMoneyInAccount() {
-        accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(25)));
+        accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(25)).get());
         assertThat(accountWithTenEuros.balance().amount()).isEqualTo(BigDecimal.valueOf(10 + 25));
     }
 
     @Test
     void shoulNotDepositZero() {
-        Exception throwed = assertThrows(
-            AccountException.DepositException.class, 
-            () -> accountWithTenEuros.deposit(Money.of(BigDecimal.ZERO))
-        );
-        assertThat(throwed).hasMessage("Money transferred cannot be negative.");
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.ZERO).get()))
+            .isInstanceOf(AccountException.DepositException.class)
+            .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulNotDepositStrictlyNegativeAmount() {
-        Exception throwed = assertThrows(
-            AccountException.DepositException.class, 
-            () -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1)))
-        );
-        assertThat(throwed).hasMessage("Money transferred cannot be negative.");
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1)).get()))
+            .isInstanceOf(AccountException.DepositException.class)
+            .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulWithdraw() {
-        accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(25)));
-        assertThat(accountWithTenEuros.balance().amount()).isEqualTo(BigDecimal.valueOf(10 - 25));
+        accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(25)).get());
+        assertThat(accountWithTenEuros.balance().amount()).isEqualTo(BigDecimal.valueOf(-15));
     }
 
     @Test
     void shoulNotWithdrawZero() {
-        Exception throwed = assertThrows(
-            AccountException.WithdrawException.class, 
-            () -> accountWithTenEuros.withdraw(Money.of(BigDecimal.ZERO))
-        );
-        assertThat(throwed).hasMessage("Money transferred cannot be negative.");
+        assertThatThrownBy(() -> accountWithTenEuros.withdraw(zeroEuros))
+            .isInstanceOf(AccountException.WithdrawException.class)
+            .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulNotWithdrawStrictlyNegativeAmount() {
-        Exception throwed = assertThrows(
-            AccountException.WithdrawException.class, 
-            () -> accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1)))
-        );
-        assertThat(throwed).hasMessage("Money transferred cannot be negative.");
+        assertThatThrownBy(() -> accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1)).get()))
+            .isInstanceOf(AccountException.WithdrawException.class)
+            .hasMessage("Money transferred cannot be negative.");
     }
 
+    @Test
+    void createAccountWithNullIdOrBalanceShouldThrowException() {
+        assertThatThrownBy(() -> Account.create(null, tenEuros))
+            .isInstanceOf(AccountException.class)
+            .hasMessage("Account cannot have null id or balance.");
+    }
     
 }

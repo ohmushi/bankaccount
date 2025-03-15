@@ -2,7 +2,9 @@ package cat.ohmushi.account.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Optional;
 
+import cat.ohmushi.account.domain.MoneyException.CreationMoneyException;
 import cat.ohmushi.shared.annotations.Value;
 
 @Value
@@ -10,36 +12,44 @@ public class Money {
 
     private final BigDecimal amount;
 
-    private Money(BigDecimal amount) {
-        this.amount = Objects.requireNonNull(amount);
+    private Money(BigDecimal amount) throws CreationMoneyException {
+        try {
+            this.amount = Objects.requireNonNull(amount);
+        } catch (NullPointerException e) {
+            throw MoneyException.creation("Cannot create Money with null value.");
+        }
     }
 
-    public static Money of(BigDecimal amount) {
-        return new Money(amount);
+    public static Optional<Money> of(BigDecimal amount){
+        try {
+            return Optional.of(new Money(amount));
+        } catch(Exception e) {
+            return Optional.empty();
+        }
     }
 
-    public static Money of(int amount) {
-        return new Money(BigDecimal.valueOf(amount));
+    public static Optional<Money> of(int amount) {
+        return Money.of(BigDecimal.valueOf(amount));
     }
 
     public BigDecimal amount() {
         return this.amount;
     }
 
-    boolean isZeroOrPositive() {
+    public boolean isZeroOrPositive() {
         return this.amount.intValue() >= 0;
     }
 
-    boolean isStrictlyPositive() {
+    public boolean isStrictlyPositive() {
         return this.amount.intValue() > 0;
     }
 
     public Money add(Money added) {
-        return Money.of(this.amount.add(added.amount()));
+        return new Money(this.amount.add(added.amount()));
     }
 
     public Money minus(Money amount) {
-        return Money.of(this.amount.subtract(amount.amount()));
+        return new Money(this.amount.subtract(amount.amount()));
     }
 
     @Override

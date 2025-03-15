@@ -1,19 +1,54 @@
 package cat.ohmushi;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.math.BigDecimal;
+
+import org.junit.jupiter.api.Test;
+
+import cat.ohmushi.account.domain.Money;
+
 public class MoneyTest {
 
-  // should Create Money
+  @Test
+  void createMoneyShouldGivesValue() {
+    assertThat(Money.of(BigDecimal.ZERO)).isNotEmpty();
+  }
 
-  // money with same amount should be equal
+  @Test
+  void createMoneyWithNullIsEmpty() {
+    assertThat(Money.of(null)).isEmpty();
+  }
 
-  // should be Strictly Positive
+  @Test
+  void moneyWithSameAmountShouldBeEqual() {
+    assertThat(Money.of(10)).isEqualTo(Money.of(10));
+  }
 
-  // should be zero or positive
+  @Test
+  void ensureStrictlyPositiveMoney() {
+    assertThat(Money.of(1).get().isStrictlyPositive()).isTrue();
+    assertThat(Money.of(0).get().isStrictlyPositive()).isFalse();
+    assertThat(Money.of(-1).get().isStrictlyPositive()).isFalse();
+  }
 
-  // should create money with simple interger
+  @Test
+  void ensureZeroOrPositiveMoney() {
+    assertThat(Money.of(1).get().isZeroOrPositive()).isTrue();
+    assertThat(Money.of(0).get().isZeroOrPositive()).isTrue();
+    assertThat(Money.of(-1).get().isZeroOrPositive()).isFalse();
+  }
 
-  // add money to money should gives another money with right amount
+  @Test
+  void addMoneyToMoneyShouldGivesAnotherMoneyWithRightAmount() {
+    assertThat(Money.of(100).get().add(Money.of(3).get())).isEqualTo(Money.of(103).get());
+    assertThat(Money.of(-100).get().add(Money.of(3).get())).isEqualTo(Money.of(-97).get());
+  }
 
-  // subtract money to money should gives another money with right amount
+  @Test
+  void subtractMoneyToMoneyShouldGivesAnotherMoneyWithRightAmount() {
+    assertThat(Money.of(100).get().minus(Money.of(3).get())).isEqualTo(Money.of(97).get());
+    assertThat(Money.of(-100).get().minus(Money.of(3).get())).isEqualTo(Money.of(-103).get());
+  }
   
 }
