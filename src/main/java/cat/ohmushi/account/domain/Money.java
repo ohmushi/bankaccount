@@ -3,6 +3,7 @@ package cat.ohmushi.account.domain;
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.IntPredicate;
 
 import cat.ohmushi.account.domain.MoneyException.CreationMoneyException;
 import cat.ohmushi.shared.OptionalUtils;
@@ -44,19 +45,21 @@ final class Money {
     }
 
     public Money add(Money added) throws MoneyException {
-        if (!this.currency.equals(added.currency)) {
-            throw new MoneyException("Cannot add money of different currencies. " +
-                    "Tried to add " + added.currency + " to " + this.currency + ".");
-        }
+        this.ensureHasSameCurrency(added);
         return new Money(this.amount.add(added.amount), this.currency);
     }
 
     public Money minus(Money subtracted) throws MoneyException {
-        if (!this.currency.equals(subtracted.currency)) {
-            throw new MoneyException("Cannot subtract money of different currencies. " +
-                    "Tried to subtract " + subtracted.currency + " to " + this.currency + ".");
-        }
+        this.ensureHasSameCurrency(subtracted);
         return new Money(this.amount.subtract(subtracted.amount), this.currency);
+    }
+
+    private void ensureHasSameCurrency(Money other) throws MoneyException {
+        if (!this.hasSameCurrencyThan(other)) {
+            var addedCurrency = Optional.ofNullable(other).map(a -> a.currency.toString()).orElse(null);
+            throw new MoneyException("Cannot calculate money of different currencies. " +
+                    "Tried " + addedCurrency + " with " + this.currency + ".");
+        }
     }
 
     @Override
@@ -85,5 +88,15 @@ final class Money {
         if (currency != other.currency)
             return false;
         return true;
+    }
+
+    public boolean hasSameCurrencyThan(Money other) {
+        return Optional.ofNullable(other)
+                .map(o -> this.currency.equals(o.currency))
+                .orElse(false);
+    }
+
+    public Currency currency() {
+        return this.currency;
     }
 }

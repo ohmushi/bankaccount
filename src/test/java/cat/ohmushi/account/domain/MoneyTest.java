@@ -68,14 +68,33 @@ public class MoneyTest {
   void addMoneyOfDifferentCurrenciesShouldThrowError() {
     assertThatThrownBy(() -> oneEuro.add(oneDollar))
         .isInstanceOf(MoneyException.class)
-        .hasMessage("Cannot add money of different currencies. Tried to add USD to EUR.");
+        .hasMessage("Cannot calculate money of different currencies. Tried USD with EUR.");
   }
 
   @Test
   void subtractMoneyOfDifferentCurrenciesShouldThrowError() {
     assertThatThrownBy(() -> oneEuro.minus(oneDollar))
         .isInstanceOf(MoneyException.class)
-        .hasMessage("Cannot subtract money of different currencies. Tried to subtract USD to EUR.");
+        .hasMessage("Cannot calculate money of different currencies. Tried USD with EUR.");
+  }
+
+  @Test
+  void addNullToMoneyShouldThrowError() {
+    assertThatThrownBy(() -> oneEuro.add(null))
+        .isInstanceOf(MoneyException.class)
+        .hasMessage("Cannot calculate money of different currencies. Tried null with EUR.");
+  }
+
+  @Test
+  void subtractNullToMoneyShouldThrowError() {
+    assertThatThrownBy(() -> oneEuro.minus(null))
+        .isInstanceOf(MoneyException.class)
+        .hasMessage("Cannot calculate money of different currencies. Tried null with EUR.");
+  }
+
+  @Test
+  void ensureMoneyHaveSameCurrenciesThanOther() {
+    assertThat(oneEuro.hasSameCurrencyThan(hundredEuros)).isTrue();
   }
 
 }

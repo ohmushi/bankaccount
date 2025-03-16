@@ -14,12 +14,13 @@ public class AcountTest {
 
     private final static AccountId exampleId = AccountId.of("id").get();
     private final static Money tenEuros = Money.of(10, Currency.EUR).get();
+    private final static Money tenDollars = Money.of(10, Currency.USD).get();
     private final static Money zeroEuros = Money.of(0, Currency.EUR).get();
     private static Account accountWithTenEuros = getAccountWithTenEuros();
 
     private static Account getAccountWithTenEuros() {
         try {
-            return Account.create(exampleId, tenEuros);
+            return Account.create(exampleId, tenEuros, Currency.EUR);
         } catch (AccountException ex) {
             return null;
         }
@@ -33,13 +34,13 @@ public class AcountTest {
     @Test
     void shouldCreateAccountWithZeroBalance() {
         assertThatNoException()
-                .isThrownBy(() -> Account.create(exampleId, zeroEuros));
+                .isThrownBy(() -> Account.create(exampleId, zeroEuros, Currency.EUR));
     }
 
     @Test
     void shouldNotCreateAccountWithNegativeBalance() {
         final var negativeBalance = Money.of(BigDecimal.valueOf(-1), Currency.EUR).get();
-        assertThatThrownBy(() -> Account.create(exampleId, negativeBalance))
+        assertThatThrownBy(() -> Account.create(exampleId, negativeBalance, Currency.EUR))
                 .isInstanceOf(AccountException.class)
                 .hasMessage("Cannot create an account with a strictly negative balance.");
     }
@@ -86,8 +87,22 @@ public class AcountTest {
 
     @Test
     void createAccountWithNullIdOrBalanceShouldThrowException() {
-        assertThatThrownBy(() -> Account.create(null, tenEuros))
+        assertThatThrownBy(() -> Account.create(null, tenEuros, Currency.EUR))
                 .isInstanceOf(AccountException.class)
                 .hasMessage("Account cannot have null id or balance.");
+    }
+
+    @Test
+    void depositDollarsToEuroAccountShouldThrowExcention() {
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(tenDollars))
+                .isInstanceOf(AccountException.DepositException.class)
+                .hasMessage("Cannot deposit USD to EUR account.");
+    }
+
+    @Test
+    void withdrawDollarsToEuroAccountShouldThrowExcention() {
+        assertThatThrownBy(() -> accountWithTenEuros.withdraw(tenDollars))
+                .isInstanceOf(AccountException.DepositException.class)
+                .hasMessage("Cannot withdraw USD to EUR account.");
     }
 }
