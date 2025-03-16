@@ -8,22 +8,12 @@ public class AccountException extends RuntimeException {
         super(msg);
     }
 
-    public static DepositException deposit(String msg) {
-        return new DepositException(msg);
+    public static TransfertException transfert(String msg) {
+        return new TransfertException(msg);
     }
 
-    public static WithdrawException withdrawal(String msg) {
-        return new WithdrawException(msg);
-    }
-
-    public static class DepositException extends AccountException {
-        public DepositException(String msg) {
-            super(msg);
-        }
-    }
-
-    public static class WithdrawException extends AccountException {
-        public WithdrawException(String msg) {
+    public static class TransfertException extends AccountException {
+        public TransfertException(String msg) {
             super(msg);
         }
     }

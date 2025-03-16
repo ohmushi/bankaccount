@@ -1,5 +1,6 @@
 package cat.ohmushi.account.domain;
 
+import cat.ohmushi.account.domain.AccountException.TransfertException;
 import cat.ohmushi.account.domain.Currency.*;
 
 import java.math.BigDecimal;
@@ -54,14 +55,14 @@ public class AcountTest {
     @Test
     void shoulNotDepositZero() {
         assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.ZERO, Currency.EUR).get()))
-                .isInstanceOf(AccountException.DepositException.class)
+                .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulNotDepositStrictlyNegativeAmount() {
         assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get()))
-                .isInstanceOf(AccountException.DepositException.class)
+                .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
 
@@ -74,14 +75,14 @@ public class AcountTest {
     @Test
     void shoulNotWithdrawZero() {
         assertThatThrownBy(() -> accountWithTenEuros.withdraw(zeroEuros))
-                .isInstanceOf(AccountException.WithdrawException.class)
+                .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulNotWithdrawStrictlyNegativeAmount() {
         assertThatThrownBy(() -> accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get()))
-                .isInstanceOf(AccountException.WithdrawException.class)
+                .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
 
@@ -95,14 +96,14 @@ public class AcountTest {
     @Test
     void depositDollarsToEuroAccountShouldThrowExcention() {
         assertThatThrownBy(() -> accountWithTenEuros.deposit(tenDollars))
-                .isInstanceOf(AccountException.DepositException.class)
-                .hasMessage("Cannot deposit USD to EUR account.");
+                .isInstanceOf(TransfertException.class)
+                .hasMessage("Cannot transfert USD to EUR account.");
     }
 
     @Test
     void withdrawDollarsToEuroAccountShouldThrowExcention() {
         assertThatThrownBy(() -> accountWithTenEuros.withdraw(tenDollars))
-                .isInstanceOf(AccountException.DepositException.class)
-                .hasMessage("Cannot withdraw USD to EUR account.");
+                .isInstanceOf(TransfertException.class)
+                .hasMessage("Cannot transfert USD to EUR account.");
     }
 }

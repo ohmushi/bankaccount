@@ -3,8 +3,7 @@ package cat.ohmushi.account.domain;
 import java.util.Objects;
 import java.util.Optional;
 
-import cat.ohmushi.account.domain.AccountException.DepositException;
-import cat.ohmushi.account.domain.AccountException.WithdrawException;
+import cat.ohmushi.account.domain.AccountException.TransfertException;
 import cat.ohmushi.shared.annotations.DomainEntity;
 
 @DomainEntity
@@ -42,27 +41,32 @@ public final class Account {
                 .orElse(false);
     }
 
-    public void deposit(Money amount) throws DepositException {
+    public void deposit(Money amount) throws TransfertException {
         if (!this.currencyIs(amount.currency())) {
             String amountCurrency = Objects.isNull(amount) ? null : amount.currency().toString();
-            throw AccountException.deposit("Cannot deposit " + amountCurrency + " to " + this.currency + " account.");
+            throw AccountException
+                    .transfert("Cannot transfert " + amountCurrency + " to " + this.currency + " account.");
         }
         if (!amount.isStrictlyPositive()) {
-            throw AccountException.deposit("Money transferred cannot be negative.");
+            throw AccountException.transfert("Money transferred cannot be negative.");
         }
 
         this.balance = this.balance.add(amount);
     }
 
-    public void withdraw(Money amount) throws WithdrawException {
+    public void withdraw(Money amount) throws TransfertException {
+        this.ensureValidAmount(amount);
+        this.balance = this.balance.minus(amount);
+    }
+
+    private void ensureValidAmount(Money amount) throws AccountException {
         if (!this.currencyIs(amount.currency())) {
             String amountCurrency = Objects.isNull(amount) ? null : amount.currency().toString();
-            throw AccountException.deposit("Cannot withdraw " + amountCurrency + " to " + this.currency + " account.");
+            throw AccountException
+                    .transfert("Cannot transfert " + amountCurrency + " to " + this.currency + " account.");
         }
         if (!amount.isStrictlyPositive()) {
-            throw AccountException.withdrawal("Money transferred cannot be negative.");
+            throw AccountException.transfert("Money transferred cannot be negative.");
         }
-
-        this.balance = this.balance.minus(amount);
     }
 }
