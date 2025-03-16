@@ -94,8 +94,7 @@ interface AccountEvent extends Event<Account> {
 
     @Override
     public Account play(Account a) {
-      a.deposit(this.deposited);
-      a.addEvent(this);
+      a.deposit(this.deposited, this.eventDate);
       return a;
     }
 

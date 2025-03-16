@@ -3,6 +3,7 @@ package cat.ohmushi.account.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
+import static java.time.LocalDateTime.now;
 
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
@@ -26,32 +27,32 @@ public class AccountEventTest {
 
     assertThat(account.events())
         .usingRecursiveFieldByFieldElementComparator(ignoreDates)
-        .containsExactly(new AccountCreated(id, zeroEuro, Currency.EUR, LocalDateTime.now()));
+        .containsExactly(new AccountCreated(id, zeroEuro, Currency.EUR, now()));
   }
 
   @Test
   void depositedInAccountShouldHaveCreationEventAndDepositedEvent() {
     var account = Account.create(id, zeroEuro, Currency.EUR);
-    account.deposit(tenEuro);
+    account.deposit(tenEuro, now());
 
     assertThat(account.events())
         .usingRecursiveFieldByFieldElementComparator(ignoreDates)
         .containsExactly(
-            new AccountCreated(id, zeroEuro, Currency.EUR, LocalDateTime.now()),
-            new MoneyDepositedInAccount(tenEuro, LocalDateTime.now()));
+            new AccountCreated(id, zeroEuro, Currency.EUR, now()),
+            new MoneyDepositedInAccount(tenEuro, now()));
   }
 
   @Test
   void withdrawFromAccountShouldHaveWithdrawnEvent() {
     var account = Account.create(id, zeroEuro, Currency.EUR);
-    account.deposit(tenEuro);
+    account.deposit(tenEuro, now());
     account.withdraw(tenEuro);
 
     assertThat(account.events())
         .usingRecursiveFieldByFieldElementComparator(ignoreDates)
         .containsExactly(
-            new AccountCreated(id, zeroEuro, Currency.EUR, LocalDateTime.now()),
-            new MoneyDepositedInAccount(tenEuro, LocalDateTime.now()),
-            new MoneyWithdrawnFromAccount(tenEuro, LocalDateTime.now()));
+            new AccountCreated(id, zeroEuro, Currency.EUR, now()),
+            new MoneyDepositedInAccount(tenEuro, now()),
+            new MoneyWithdrawnFromAccount(tenEuro, now()));
   }
 }

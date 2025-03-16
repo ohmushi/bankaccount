@@ -3,6 +3,8 @@ package cat.ohmushi.account.domain;
 import cat.ohmushi.account.domain.AccountException.TransfertException;
 
 import java.math.BigDecimal;
+import static java.time.LocalDateTime.now;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,20 +49,20 @@ public class AcountTest {
 
     @Test
     void shoulDepositMoneyInAccount() {
-        accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(25), Currency.EUR).get());
+        accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(25), Currency.EUR).get(), now());
         assertThat(accountWithTenEuros.balance().amount()).isEqualTo(BigDecimal.valueOf(10 + 25));
     }
 
     @Test
     void shoulNotDepositZero() {
-        assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.ZERO, Currency.EUR).get()))
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.ZERO, Currency.EUR).get(), now()))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulNotDepositStrictlyNegativeAmount() {
-        assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get()))
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now()))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
@@ -101,7 +103,7 @@ public class AcountTest {
 
     @Test
     void depositDollarsToEuroAccountShouldThrowExcention() {
-        assertThatThrownBy(() -> accountWithTenEuros.deposit(tenDollars))
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(tenDollars, now()))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Cannot transfert USD to EUR account.");
     }

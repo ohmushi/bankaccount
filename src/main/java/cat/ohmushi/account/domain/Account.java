@@ -67,10 +67,10 @@ public final class Account implements DomainEntityT {
                 .orElse(false);
     }
 
-    public void deposit(Money amount) throws TransfertException {
+    public void deposit(Money amount, LocalDateTime date) throws TransfertException {
         this.ensureValidAmount(amount);
         this.balance = this.balance.add(amount);
-        this.addEvent(new MoneyDepositedInAccount(amount, LocalDateTime.now()));
+        this.addEvent(new MoneyDepositedInAccount(amount, date));
     }
 
     public void addEvent(AccountEvent e) {
