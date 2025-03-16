@@ -8,45 +8,58 @@ import org.junit.jupiter.api.Test;
 
 public class MoneyTest {
 
+  private static Money zeroEuro = Money.of(0, Currency.EUR).get();
+  private static Money oneEuro = Money.of(1, Currency.EUR).get();
+  private static Money minusOneEuro = Money.of(-1, Currency.EUR).get();
+  private static Money hundredEuros = Money.of(100, Currency.EUR).get();
+  private static Money threeEuros = Money.of(3, Currency.EUR).get();
+  private static Money minusOneHundredEuros = Money.of(-100, Currency.EUR).get();
+
   @Test
   void createMoneyShouldGivesValue() {
-    assertThat(Money.of(BigDecimal.ZERO)).isNotEmpty();
+    assertThat(Money.of(BigDecimal.ZERO, Currency.EUR)).isNotEmpty();
   }
 
   @Test
   void createMoneyWithNullIsEmpty() {
-    assertThat(Money.of(null)).isEmpty();
+    assertThat(Money.of(null, Currency.EUR)).isEmpty();
   }
 
   @Test
   void moneyWithSameAmountShouldBeEqual() {
-    assertThat(Money.of(10)).isEqualTo(Money.of(10));
+    assertThat(Money.of(10, Currency.EUR)).isEqualTo(Money.of(10, Currency.EUR));
+  }
+
+  @Test
+  void moneyWithSameAmountButDifferentCurrenciesShouldNotBeEqual() {
+    assertThat(Money.of(10, Currency.EUR)).isNotEqualTo(Money.of(10, Currency.USD));
   }
 
   @Test
   void ensureStrictlyPositiveMoney() {
-    assertThat(Money.of(1).get().isStrictlyPositive()).isTrue();
-    assertThat(Money.of(0).get().isStrictlyPositive()).isFalse();
-    assertThat(Money.of(-1).get().isStrictlyPositive()).isFalse();
+    assertThat(oneEuro.isStrictlyPositive()).isTrue();
+    assertThat(zeroEuro.isStrictlyPositive()).isFalse();
+    assertThat(minusOneEuro.isStrictlyPositive()).isFalse();
   }
 
   @Test
   void ensureZeroOrPositiveMoney() {
-    assertThat(Money.of(1).get().isZeroOrPositive()).isTrue();
-    assertThat(Money.of(0).get().isZeroOrPositive()).isTrue();
-    assertThat(Money.of(-1).get().isZeroOrPositive()).isFalse();
+    assertThat(oneEuro.isZeroOrPositive()).isTrue();
+    assertThat(zeroEuro.isZeroOrPositive()).isTrue();
+    assertThat(minusOneEuro.isZeroOrPositive()).isFalse();
   }
 
   @Test
   void addMoneyToMoneyShouldGivesAnotherMoneyWithRightAmount() {
-    assertThat(Money.of(100).get().add(Money.of(3).get())).isEqualTo(Money.of(103).get());
-    assertThat(Money.of(-100).get().add(Money.of(3).get())).isEqualTo(Money.of(-97).get());
+
+    assertThat(hundredEuros.add(threeEuros)).isEqualTo(Money.of(103, Currency.EUR).get());
+    assertThat(minusOneHundredEuros.add(threeEuros)).isEqualTo(Money.of(-97, Currency.EUR).get());
   }
 
   @Test
   void subtractMoneyToMoneyShouldGivesAnotherMoneyWithRightAmount() {
-    assertThat(Money.of(100).get().minus(Money.of(3).get())).isEqualTo(Money.of(97).get());
-    assertThat(Money.of(-100).get().minus(Money.of(3).get())).isEqualTo(Money.of(-103).get());
+    assertThat(hundredEuros.minus(threeEuros)).isEqualTo(Money.of(97, Currency.EUR).get());
+    assertThat(minusOneHundredEuros.minus(threeEuros)).isEqualTo(Money.of(-103, Currency.EUR).get());
   }
   
 }

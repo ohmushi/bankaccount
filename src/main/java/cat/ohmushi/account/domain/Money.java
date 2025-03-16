@@ -11,25 +11,27 @@ import cat.ohmushi.shared.annotations.Value;
 final class Money {
 
     private final BigDecimal amount;
+    private final Currency currency;
 
-    private Money(BigDecimal amount) throws CreationMoneyException {
+    private Money(BigDecimal amount, Currency currency) throws CreationMoneyException {
         try {
             this.amount = Objects.requireNonNull(amount);
+            this.currency = Objects.requireNonNull(currency);
         } catch (NullPointerException e) {
             throw MoneyException.creation("Cannot create Money with null value.");
         }
     }
 
-    public static Optional<Money> of(BigDecimal amount){
+    public static Optional<Money> of(BigDecimal amount, Currency currency){
         try {
-            return Optional.of(new Money(amount));
+            return Optional.of(new Money(amount, currency));
         } catch(Exception e) {
             return Optional.empty();
         }
     }
 
-    public static Optional<Money> of(int amount) {
-        return Money.of(BigDecimal.valueOf(amount));
+    public static Optional<Money> of(int amount, Currency currency) {
+        return Money.of(BigDecimal.valueOf(amount), currency);
     }
 
     public BigDecimal amount() {
@@ -45,11 +47,13 @@ final class Money {
     }
 
     public Money add(Money added) {
-        return new Money(this.amount.add(added.amount()));
+        // TODO check same currency
+        return new Money(this.amount.add(added.amount), this.currency);
     }
 
-    public Money minus(Money amount) {
-        return new Money(this.amount.subtract(amount.amount()));
+    public Money minus(Money subtracted) {
+        // TODO check same currency
+        return new Money(this.amount.subtract(subtracted.amount), this.currency);
     }
 
     @Override
@@ -57,6 +61,7 @@ final class Money {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((amount == null) ? 0 : amount.hashCode());
+        result = prime * result + ((currency == null) ? 0 : currency.hashCode());
         return result;
     }
 
@@ -74,9 +79,8 @@ final class Money {
                 return false;
         } else if (!amount.equals(other.amount))
             return false;
+        if (currency != other.currency)
+            return false;
         return true;
     }
-
-    
-
 }
