@@ -1,6 +1,7 @@
 package cat.ohmushi.account.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 
@@ -14,6 +15,7 @@ public class MoneyTest {
   private static Money hundredEuros = Money.of(100, Currency.EUR).get();
   private static Money threeEuros = Money.of(3, Currency.EUR).get();
   private static Money minusOneHundredEuros = Money.of(-100, Currency.EUR).get();
+  private static Money oneDollar = Money.of(1, Currency.USD).get();
 
   @Test
   void createMoneyShouldGivesValue() {
@@ -61,5 +63,19 @@ public class MoneyTest {
     assertThat(hundredEuros.minus(threeEuros)).isEqualTo(Money.of(97, Currency.EUR).get());
     assertThat(minusOneHundredEuros.minus(threeEuros)).isEqualTo(Money.of(-103, Currency.EUR).get());
   }
-  
+
+  @Test
+  void addMoneyOfDifferentCurrenciesShouldThrowError() {
+    assertThatThrownBy(() -> oneEuro.add(oneDollar))
+        .isInstanceOf(MoneyException.class)
+        .hasMessage("Cannot add money of different currencies. Tried to add USD to EUR.");
+  }
+
+  @Test
+  void subtractMoneyOfDifferentCurrenciesShouldThrowError() {
+    assertThatThrownBy(() -> oneEuro.minus(oneDollar))
+        .isInstanceOf(MoneyException.class)
+        .hasMessage("Cannot subtract money of different currencies. Tried to subtract USD to EUR.");
+  }
+
 }

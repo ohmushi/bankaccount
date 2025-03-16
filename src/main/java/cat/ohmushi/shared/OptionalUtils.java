@@ -1,12 +1,12 @@
 package cat.ohmushi.shared;
 
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.concurrent.Callable;
 
 public class OptionalUtils {
-  public static <T, V> Optional<V> ofThrowable(T it, Function<T, V> func) {
+    public static <T> Optional<T> ofThrowable(Callable<T> func) {
         try {
-            return Optional.ofNullable(func.apply(it));
+            return Optional.ofNullable(func.call());
         } catch (final Exception e) {
             return Optional.empty();
         }

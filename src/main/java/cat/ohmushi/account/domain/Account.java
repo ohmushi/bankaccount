@@ -16,16 +16,16 @@ public final class Account {
         try {
             this.id = Objects.requireNonNull(id);
             this.balance = Objects.requireNonNull(balance);
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             throw new AccountException("Account cannot have null id or balance.");
         }
     }
 
     public static Account create(AccountId id, Money balance) throws AccountException {
-        if(!balance.isZeroOrPositive()) {
+        if (!balance.isZeroOrPositive()) {
             throw new AccountException("Cannot create an account with a strictly negative balance.");
         }
-        
+
         return new Account(id, balance);
     }
 
@@ -34,7 +34,7 @@ public final class Account {
     }
 
     public void deposit(Money amount) throws DepositException {
-        if(!amount.isStrictlyPositive()) {
+        if (!amount.isStrictlyPositive()) {
             throw AccountException.deposit("Money transferred cannot be negative.");
         }
 
@@ -42,7 +42,7 @@ public final class Account {
     }
 
     public void withdraw(Money amount) throws WithdrawException {
-        if(!amount.isStrictlyPositive()) {
+        if (!amount.isStrictlyPositive()) {
             throw AccountException.withdrawal("Money transferred cannot be negative.");
         }
 

@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import cat.ohmushi.account.domain.MoneyException.CreationMoneyException;
+import cat.ohmushi.shared.OptionalUtils;
 import cat.ohmushi.shared.annotations.Value;
 
 @Value
@@ -22,12 +23,8 @@ final class Money {
         }
     }
 
-    public static Optional<Money> of(BigDecimal amount, Currency currency){
-        try {
-            return Optional.of(new Money(amount, currency));
-        } catch(Exception e) {
-            return Optional.empty();
-        }
+    public static Optional<Money> of(BigDecimal amount, Currency currency) {
+        return OptionalUtils.ofThrowable(() -> new Money(amount, currency));
     }
 
     public static Optional<Money> of(int amount, Currency currency) {
@@ -46,13 +43,19 @@ final class Money {
         return this.amount.intValue() > 0;
     }
 
-    public Money add(Money added) {
-        // TODO check same currency
+    public Money add(Money added) throws MoneyException {
+        if (!this.currency.equals(added.currency)) {
+            throw new MoneyException("Cannot add money of different currencies. " +
+                    "Tried to add " + added.currency + " to " + this.currency + ".");
+        }
         return new Money(this.amount.add(added.amount), this.currency);
     }
 
-    public Money minus(Money subtracted) {
-        // TODO check same currency
+    public Money minus(Money subtracted) throws MoneyException {
+        if (!this.currency.equals(subtracted.currency)) {
+            throw new MoneyException("Cannot subtract money of different currencies. " +
+                    "Tried to subtract " + subtracted.currency + " to " + this.currency + ".");
+        }
         return new Money(this.amount.subtract(subtracted.amount), this.currency);
     }
 

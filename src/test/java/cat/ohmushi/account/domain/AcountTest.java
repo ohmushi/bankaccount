@@ -33,15 +33,15 @@ public class AcountTest {
     @Test
     void shouldCreateAccountWithZeroBalance() {
         assertThatNoException()
-            .isThrownBy(() -> Account.create(exampleId, zeroEuros));
+                .isThrownBy(() -> Account.create(exampleId, zeroEuros));
     }
 
     @Test
     void shouldNotCreateAccountWithNegativeBalance() {
         final var negativeBalance = Money.of(BigDecimal.valueOf(-1), Currency.EUR).get();
         assertThatThrownBy(() -> Account.create(exampleId, negativeBalance))
-            .isInstanceOf(AccountException.class)
-            .hasMessage("Cannot create an account with a strictly negative balance.");
+                .isInstanceOf(AccountException.class)
+                .hasMessage("Cannot create an account with a strictly negative balance.");
     }
 
     @Test
@@ -53,15 +53,15 @@ public class AcountTest {
     @Test
     void shoulNotDepositZero() {
         assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.ZERO, Currency.EUR).get()))
-            .isInstanceOf(AccountException.DepositException.class)
-            .hasMessage("Money transferred cannot be negative.");
+                .isInstanceOf(AccountException.DepositException.class)
+                .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulNotDepositStrictlyNegativeAmount() {
         assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get()))
-            .isInstanceOf(AccountException.DepositException.class)
-            .hasMessage("Money transferred cannot be negative.");
+                .isInstanceOf(AccountException.DepositException.class)
+                .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
@@ -73,22 +73,21 @@ public class AcountTest {
     @Test
     void shoulNotWithdrawZero() {
         assertThatThrownBy(() -> accountWithTenEuros.withdraw(zeroEuros))
-            .isInstanceOf(AccountException.WithdrawException.class)
-            .hasMessage("Money transferred cannot be negative.");
+                .isInstanceOf(AccountException.WithdrawException.class)
+                .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulNotWithdrawStrictlyNegativeAmount() {
         assertThatThrownBy(() -> accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get()))
-            .isInstanceOf(AccountException.WithdrawException.class)
-            .hasMessage("Money transferred cannot be negative.");
+                .isInstanceOf(AccountException.WithdrawException.class)
+                .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void createAccountWithNullIdOrBalanceShouldThrowException() {
         assertThatThrownBy(() -> Account.create(null, tenEuros))
-            .isInstanceOf(AccountException.class)
-            .hasMessage("Account cannot have null id or balance.");
+                .isInstanceOf(AccountException.class)
+                .hasMessage("Account cannot have null id or balance.");
     }
-    
 }

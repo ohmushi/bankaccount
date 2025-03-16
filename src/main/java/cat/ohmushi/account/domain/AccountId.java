@@ -3,17 +3,18 @@ package cat.ohmushi.account.domain;
 import java.util.Objects;
 import java.util.Optional;
 
+import cat.ohmushi.shared.OptionalUtils;
 import cat.ohmushi.shared.annotations.DomainEntityId;
 
 @DomainEntityId
 final class AccountId {
 
     private final String value;
-    
+
     private AccountId(String value) throws AccountException {
         try {
             this.value = Objects.requireNonNull(value).trim().toLowerCase();
-            if(this.value.isEmpty()) {
+            if (this.value.isEmpty()) {
                 throw new IllegalArgumentException();
             }
         } catch (Exception e) {
@@ -22,11 +23,7 @@ final class AccountId {
     }
 
     public static Optional<AccountId> of(String id) {
-        try {
-            return Optional.of(new AccountId(id));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+        return OptionalUtils.ofThrowable(() -> new AccountId(id));
     }
 
     @Override
@@ -54,5 +51,4 @@ final class AccountId {
         return true;
     }
 
-    
 }
