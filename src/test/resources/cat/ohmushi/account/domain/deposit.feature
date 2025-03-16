@@ -19,3 +19,19 @@ Feature: Deposit into a bank account
     When I try to deposit -€100
     Then the operation is declined
     And my balance should remain €500
+
+  Scenario: Deposit a different currency (not allowed)
+    Given an account with a balance of €500
+    When I try to deposit $100
+    Then the operation is declined
+    And my balance should remain €500
+
+  Scenario: Create an account with a negative initial balance (not allowed)
+    Given I attempt to create an account with an initial balance of -€100
+    Then the operation is declined
+    And the account should not be created
+
+  Scenario: Deposit an extremely large amount (boundary test)
+    Given an account with a balance of €500
+    When I deposit €1000000000
+    Then my balance should be €1000000500
