@@ -1,6 +1,9 @@
 package cat.ohmushi.account.domain;
 
-public enum Currency {
+import cat.ohmushi.shared.annotations.Value;
+
+@Value
+enum Currency {
   EUR,
   USD,
 }

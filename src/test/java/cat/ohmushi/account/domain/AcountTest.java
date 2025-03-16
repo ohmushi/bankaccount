@@ -1,7 +1,6 @@
 package cat.ohmushi.account.domain;
 
 import cat.ohmushi.account.domain.AccountException.TransfertException;
-import cat.ohmushi.account.domain.Currency.*;
 
 import java.math.BigDecimal;
 
@@ -90,7 +89,14 @@ public class AcountTest {
     void createAccountWithNullIdOrBalanceShouldThrowException() {
         assertThatThrownBy(() -> Account.create(null, tenEuros, Currency.EUR))
                 .isInstanceOf(AccountException.class)
-                .hasMessage("Account cannot have null id or balance.");
+                .hasMessage("Account cannot have null field.");
+    }
+
+    @Test
+    void createAccountWithBalanceCurrencyDifferentThantAccountCurrencyShouldThrowException() {
+        assertThatThrownBy(() -> Account.create(exampleId, tenEuros, Currency.USD))
+                .isInstanceOf(AccountException.class)
+                .hasMessage("Cannot create account in USD with EUR initial balance.");
     }
 
     @Test

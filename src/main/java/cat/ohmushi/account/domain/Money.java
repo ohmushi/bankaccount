@@ -3,7 +3,6 @@ package cat.ohmushi.account.domain;
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.IntPredicate;
 
 import cat.ohmushi.account.domain.MoneyException.CreationMoneyException;
 import cat.ohmushi.shared.OptionalUtils;
@@ -62,6 +61,16 @@ final class Money {
         }
     }
 
+    public boolean hasSameCurrencyThan(Money other) {
+        return Optional.ofNullable(other)
+                .map(o -> this.currency.equals(o.currency))
+                .orElse(false);
+    }
+
+    public Currency currency() {
+        return this.currency;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -90,13 +99,9 @@ final class Money {
         return true;
     }
 
-    public boolean hasSameCurrencyThan(Money other) {
-        return Optional.ofNullable(other)
-                .map(o -> this.currency.equals(o.currency))
-                .orElse(false);
+    @Override
+    public String toString() {
+        return amount + " " + currency;
     }
 
-    public Currency currency() {
-        return this.currency;
-    }
 }

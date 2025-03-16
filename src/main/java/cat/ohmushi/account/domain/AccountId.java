@@ -51,4 +51,9 @@ final class AccountId {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
 }
