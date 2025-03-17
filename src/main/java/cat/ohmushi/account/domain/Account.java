@@ -10,12 +10,12 @@ import java.util.Optional;
 import cat.ohmushi.account.domain.AccountEvent.AccountCreated;
 import cat.ohmushi.account.domain.AccountEvent.MoneyDepositedInAccount;
 import cat.ohmushi.account.domain.AccountEvent.MoneyWithdrawnFromAccount;
-import cat.ohmushi.account.domain.AccountException.TransfertException;
+import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
 import cat.ohmushi.shared.annotations.DomainEntity;
-import cat.ohmushi.shared.annotations.DomainEntity.DomainEntityT;
+import cat.ohmushi.shared.annotations.DomainEntity.DomainEntityType;
 
 @DomainEntity
-public final class Account implements DomainEntityT {
+public final class Account implements DomainEntityType {
 
     private final AccountId id;
     private Money balance;
@@ -67,10 +67,14 @@ public final class Account implements DomainEntityT {
                 .orElse(false);
     }
 
-    public void deposit(Money amount, LocalDateTime date) throws TransfertException {
-        this.ensureValidAmount(amount);
-        this.balance = this.balance.add(amount);
-        this.addEvent(new MoneyDepositedInAccount(amount, date));
+    public void deposit(Money amount, LocalDateTime date){
+        try {
+            this.ensureValidAmount(amount);
+            this.balance = this.balance.add(amount);
+            this.addEvent(new MoneyDepositedInAccount(amount, date));
+        } catch (Exception e) {
+            this.addEvent(new TransfertFailed(e, LocalDateTime.now()));
+        }
     }
 
     public void addEvent(AccountEvent e) {
@@ -79,10 +83,14 @@ public final class Account implements DomainEntityT {
         }
     }
 
-    public void withdraw(Money amount) throws TransfertException {
-        this.ensureValidAmount(amount);
-        this.balance = this.balance.minus(amount);
-        this.addEvent(new MoneyWithdrawnFromAccount(amount, LocalDateTime.now()));
+    public void withdraw(Money amount) {
+        try {
+            this.ensureValidAmount(amount);
+            this.balance = this.balance.minus(amount);
+            this.addEvent(new MoneyWithdrawnFromAccount(amount, LocalDateTime.now()));
+        } catch (Exception e) {
+            this.addEvent(new TransfertFailed(e, LocalDateTime.now()));
+        }
     }
 
     private void ensureValidAmount(Money amount) throws AccountException {

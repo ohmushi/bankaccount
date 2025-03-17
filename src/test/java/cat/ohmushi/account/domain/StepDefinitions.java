@@ -10,9 +10,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
+
+import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
 
 import static java.time.LocalDateTime.now;
 
@@ -28,17 +30,17 @@ public class StepDefinitions {
             case "$" -> Currency.USD;
             default -> throw new Exception("Unhandled currency '" + c + "'.");
         };
-        var amount = new BigDecimal(a).multiply(BigDecimal.valueOf(negative.isEmpty() ? 1 : -1)) ;
+        var amount = new BigDecimal(a).multiply(BigDecimal.valueOf(negative.isEmpty() ? 1 : -1));
         return Money.of(amount, currency).get();
     }
 
-    //I withdraw €500
+    // I withdraw €500
     @ParameterType("deposit|withdraw|withdrawal")
     public String action(String a) throws Exception {
-        if(Objects.isNull(a)) {
+        if (Objects.isNull(a)) {
             throw new Exception("Action is null.");
         }
-        return switch(a) {
+        return switch (a) {
             case "deposit" -> "deposit";
             case "withdraw", "withdrawal" -> "withdraw";
             default -> throw new Exception("Unhandled action '" + a + "'.");
@@ -53,26 +55,27 @@ public class StepDefinitions {
     @Given("an account with a(n initial) balance of {money}")
     public void an_account_with_a_balance_of(Money balance) {
         this.account = Account.create(
-            AccountId.of("id").get(), 
-            balance, 
-            balance.currency());
+                AccountId.of("id").get(),
+                balance,
+                balance.currency());
     }
 
     @Given("a {action} of {money} on {date}")
     public void a_deposit_or_withdraw_on_date(String action, Money amount, LocalDateTime ondate) {
-        switch(action) {
+        switch (action) {
             case "deposit" -> this.account.deposit(amount, ondate);
             case "withdraw" -> this.account.withdraw(amount);
-        };
+        }
+        ;
     }
 
     @Given("I attempt to create an account with an initial balance of {money}")
     public void I_attempt_to_create_an_account_with_an_initial_balance_of(Money balance) {
         try {
             this.account = Account.create(
-            AccountId.of("id").get(), 
-            balance, 
-            balance.currency());
+                    AccountId.of("id").get(),
+                    balance,
+                    balance.currency());
         } catch (Exception e) {
             this.exception = e;
         }
@@ -80,10 +83,11 @@ public class StepDefinitions {
 
     @When("I {action} {money}")
     public void I_deposit_or_withdraw(String action, Money amount) {
-        switch(action) {
+        switch (action) {
             case "deposit" -> this.account.deposit(amount, now());
             case "withdraw" -> this.account.withdraw(amount);
-        };
+        }
+        ;
     }
 
     @When("I check my statement")
@@ -93,11 +97,7 @@ public class StepDefinitions {
 
     @When("I try to {action} {money}")
     public void I_try_to_deposit(String action, Money amount) {
-        try {
-            this.I_deposit_or_withdraw(action, amount);
-        } catch (Exception e) {
-            this.exception = e;
-        }
+        this.I_deposit_or_withdraw(action, amount);
     }
 
     @Then("my balance should be {money}")
@@ -107,7 +107,10 @@ public class StepDefinitions {
 
     @Then("the operation is declined")
     public void the_operation_is_declined() {
-        assertThat(this.exception).isNotNull();
+        if(Objects.isNull(this.exception)) {
+            var events = account.events().stream().map((AccountEvent e) -> e.getClass().getName()).toList();
+            assertThat(events).contains(TransfertFailed.class.getName());
+        }
     }
 
     @Then("my balance should remain {money}")
@@ -125,5 +128,4 @@ public class StepDefinitions {
         this.statement = null;
     }
 
-    
 }

@@ -15,7 +15,7 @@ interface AccountEvent extends Event<Account> {
     private final AccountId id;
     private final Money balance;
     private final Currency currency;
-    private LocalDateTime creationDate;
+    private final LocalDateTime creationDate;
 
     public AccountCreated(AccountId id, Money balance, Currency currency, LocalDateTime creationDate) {
       this.id = Objects.requireNonNull(id);
@@ -85,7 +85,7 @@ interface AccountEvent extends Event<Account> {
   @Value
   public class MoneyDepositedInAccount implements AccountEvent {
     private final Money deposited;
-    private LocalDateTime eventDate;
+    private final  LocalDateTime eventDate;
 
     public MoneyDepositedInAccount(Money amount, LocalDateTime creationDate) {
       this.deposited = Objects.requireNonNull(amount);
@@ -144,7 +144,7 @@ interface AccountEvent extends Event<Account> {
   @Value
   public class MoneyWithdrawnFromAccount implements AccountEvent {
     private final Money withdrawn;
-    private LocalDateTime eventDate;
+    private final LocalDateTime eventDate;
 
     public MoneyWithdrawnFromAccount(Money amount, LocalDateTime creationDate) {
       this.withdrawn = Objects.requireNonNull(amount);
@@ -197,6 +197,64 @@ interface AccountEvent extends Event<Account> {
     @Override
     public String toString() {
       return "MoneyWithdrawnFromAccount [withdrawn=" + withdrawn + ", eventDate=" + eventDate + "]";
+    }
+
+  }
+
+  public class TransfertFailed implements AccountEvent {
+
+    private final Exception reason;
+    private final LocalDateTime eventDate;
+
+    public TransfertFailed(Exception reason, LocalDateTime eventDate) {
+      this.reason = reason;
+      this.eventDate = Objects.isNull(eventDate) ? LocalDateTime.now() : eventDate;
+    }
+
+    @Override
+    public Account play(Account a) {
+      return a;
+    }
+
+    @Override
+    public LocalDateTime getDate() {
+      return this.eventDate;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((reason == null) ? 0 : reason.hashCode());
+      result = prime * result + ((eventDate == null) ? 0 : eventDate.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      TransfertFailed other = (TransfertFailed) obj;
+      if (reason == null) {
+        if (other.reason != null)
+          return false;
+      } else if (!reason.equals(other.reason))
+        return false;
+      if (eventDate == null) {
+        if (other.eventDate != null)
+          return false;
+      } else if (!eventDate.equals(other.eventDate))
+        return false;
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "TransfertFailed [reason=" + reason.getMessage() + ", eventDate=" + eventDate + "]";
     }
 
   }
