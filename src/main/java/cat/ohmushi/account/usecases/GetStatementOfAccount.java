@@ -1,7 +1,6 @@
 package cat.ohmushi.account.usecases;
 
-import java.util.List;
-
+@FunctionalInterface
 public interface GetStatementOfAccount {
-    List<List<String>> getStatement(String id);
+    String getStatement(String id);
 }

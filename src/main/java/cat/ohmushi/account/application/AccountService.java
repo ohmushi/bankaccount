@@ -2,7 +2,6 @@ package cat.ohmushi.account.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 import cat.ohmushi.account.domain.Account;
@@ -19,9 +18,11 @@ import cat.ohmushi.account.usecases.WithdrawMoneyFromAccount;
 public class AccountService implements DepositMoneyInAccount, WithdrawMoneyFromAccount, GetStatementOfAccount {
 
     private final Accounts accounts;
+    private final AccountStatementFormatter formatter;
 
-    public AccountService(Accounts accounts) {
+    public AccountService(Accounts accounts, AccountStatementFormatter formatter) {
         this.accounts = Objects.requireNonNull(accounts);
+        this.formatter = Objects.isNull(formatter) ? new DefaultAccountStatementFormatter() : formatter;
     }
 
     private Account getAccount(String id) throws AccountApplicationException {
@@ -49,9 +50,9 @@ public class AccountService implements DepositMoneyInAccount, WithdrawMoneyFromA
     }
 
     @Override
-    public List<List<String>> getStatement(String id) throws AccountApplicationException {
+    public String getStatement(String id) throws AccountApplicationException {
         Account account = this.getAccount(id);
-        return AccountStatement.forAccount(account).formatted();
+        return this.formatter.format(AccountStatement.forAccount(account));
     }
 
 }
