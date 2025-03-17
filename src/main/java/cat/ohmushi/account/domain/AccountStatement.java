@@ -1,7 +1,7 @@
 package cat.ohmushi.account.domain;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class AccountStatement {
 
@@ -21,12 +21,5 @@ public class AccountStatement {
                 .map(AccountStatementLine::fromAccountEvent)
                 .filter(Optional::isPresent).map(Optional::get)
                 .toList();
-    }
-
-    public List<List<String>> formatted() {
-        var head = Stream.of(
-                List.of("Date", "Operation", "Amount", "Balance"));
-        var body = this.lines().stream().map(AccountStatementLine::format);
-        return Stream.concat(head, body).toList();
     }
 }

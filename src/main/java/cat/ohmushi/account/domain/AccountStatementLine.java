@@ -1,7 +1,6 @@
 package cat.ohmushi.account.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import cat.ohmushi.account.domain.AccountEvent.AccountCreated;
@@ -11,7 +10,7 @@ import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
 import cat.ohmushi.shared.annotations.Value;
 
 @Value
-record AccountStatementLine(
+public record AccountStatementLine(
         LocalDateTime date,
         String operation,
         Money amount,
@@ -55,37 +54,7 @@ record AccountStatementLine(
                 operation,
                 amount.orElse(Money.of(0, balance.currency()).get()),
                 balance,
-                error
-        );
+                error);
         return Optional.of(line);
-    }
-
-    public static List<String> format(AccountStatementLine l) {
-        String date = String.format("%02d/%02d/%4d", l.date.getMonthValue(), l.date().getDayOfMonth(), l.date().getYear());
-        String amountSign = switch (l.operation) {
-            case "Deposit" ->
-                "+";
-            case "Withdrawal" ->
-                "-";
-            default ->
-                "";
-        };
-
-        String balanceSign = switch (l.balance.amount().signum()) {
-            case -1 ->
-                "-";
-            default ->
-                "";
-        };
-
-        String currency = switch(l.balance.currency()) {
-            case Currency.EUR -> "€";
-            case Currency.USD -> "$";
-            default -> "";
-        };
-
-        String amount = amountSign + currency + l.amount.amount().abs().intValue();
-        String balance = balanceSign + currency + l.balance.amount().abs().intValue();
-        return List.of(date, l.operation, amount, balance);
     }
 }

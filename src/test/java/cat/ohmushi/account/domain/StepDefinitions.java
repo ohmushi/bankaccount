@@ -5,9 +5,12 @@ import java.time.LocalDateTime;
 import static java.time.LocalDateTime.now;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import cat.ohmushi.account.application.AccountStatementFormatter;
+import cat.ohmushi.account.application.DefaultAccountStatementFormatter;
 import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
@@ -19,6 +22,7 @@ public class StepDefinitions {
     private Account account;
     private Exception exception;
     private AccountStatement statement;
+    private AccountStatementFormatter formatter = new DefaultAccountStatementFormatter();
 
     @ParameterType("([-+]?)([€$])(\\d+)")
     public Money money(String negative, String c, String a) throws Exception {
@@ -46,10 +50,10 @@ public class StepDefinitions {
     @ParameterType("(\\d{2})\\/(\\d{2})\\/(\\d{4})")
     public LocalDateTime date(String month, String day, String year) {
         return LocalDateTime.of(
-            Integer.parseInt(year), 
-            Integer.parseInt(month), 
-            Integer.parseInt(day), 
-            0, 0);
+                Integer.parseInt(year),
+                Integer.parseInt(month),
+                Integer.parseInt(day),
+                0, 0);
     }
 
     @Given("an account with a(n initial) balance of {money}")
@@ -123,8 +127,13 @@ public class StepDefinitions {
 
     @Then("my statement should be:")
     public void it_should_display(DataTable displayed) {
-        List<List<String>> actualLines = displayed.asLists(String.class);
-        assertThat(this.statement.formatted()).isEqualTo(actualLines);
+        String actualLines = displayed
+                .asLists(String.class)
+                .stream()
+                .map(line -> line.stream().map(w -> String.format("%-15s", w)).toList())
+                .map(line -> String.join("", line))
+                .collect(Collectors.joining("\n"));
+        assertThat(this.formatter.format(this.statement)).isEqualTo(actualLines);
     }
 
 }
