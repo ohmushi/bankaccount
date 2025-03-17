@@ -4,13 +4,13 @@
 
 run
 ```bash
-mvn clean install
-mvn exec:java
+./mvnw clean install
+./mvnw exec:java
 ```
 
 ### Test
 ```bash
-mvn test
+./mvnw test
 ```
 
 ## Problem Description
