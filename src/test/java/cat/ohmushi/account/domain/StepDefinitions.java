@@ -12,8 +12,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
-
 import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
 
 import static java.time.LocalDateTime.now;
@@ -21,7 +19,7 @@ import static java.time.LocalDateTime.now;
 public class StepDefinitions {
     private Account account;
     private Exception exception;
-    private Statement statement;
+    private AccountStatement statement;
 
     @ParameterType("(-?)([€$])(\\d+)")
     public Money money(String negative, String c, String a) throws Exception {
@@ -34,7 +32,6 @@ public class StepDefinitions {
         return Money.of(amount, currency).get();
     }
 
-    // I withdraw €500
     @ParameterType("deposit|withdraw|withdrawal")
     public String action(String a) throws Exception {
         if (Objects.isNull(a)) {
@@ -92,7 +89,7 @@ public class StepDefinitions {
 
     @When("I check my statement")
     public void I_check_my_statement() {
-        this.statement = null;
+        this.statement = AccountStatement.forAccount(this.account);
     }
 
     @When("I try to {action} {money}")
@@ -107,7 +104,7 @@ public class StepDefinitions {
 
     @Then("the operation is declined")
     public void the_operation_is_declined() {
-        if(Objects.isNull(this.exception)) {
+        if (Objects.isNull(this.exception)) {
             var events = account.events().stream().map((AccountEvent e) -> e.getClass().getName()).toList();
             assertThat(events).contains(TransfertFailed.class.getName());
         }
@@ -123,8 +120,9 @@ public class StepDefinitions {
         assertThat(this.account).isNull();
     }
 
-    @Then("it should display:")
+    @Then("my statement should be:")
     public void it_should_display(DataTable displayed) {
+        // assertThat(displayed.asList()).containsExactly(null)
         this.statement = null;
     }
 
