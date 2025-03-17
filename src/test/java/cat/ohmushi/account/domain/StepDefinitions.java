@@ -10,9 +10,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.domain.AccountStatement.AccountStatementLine;
 
 import static java.time.LocalDateTime.now;
 
@@ -21,7 +24,7 @@ public class StepDefinitions {
     private Exception exception;
     private AccountStatement statement;
 
-    @ParameterType("(-?)([€$])(\\d+)")
+    @ParameterType("([-+]?)([€$])(\\d+)")
     public Money money(String negative, String c, String a) throws Exception {
         Currency currency = switch (c) {
             case "€" -> Currency.EUR;
@@ -122,8 +125,14 @@ public class StepDefinitions {
 
     @Then("my statement should be:")
     public void it_should_display(DataTable displayed) {
-        // assertThat(displayed.asList()).containsExactly(null)
-        this.statement = null;
+        List<List<String>> actualLines = displayed.asLists(String.class);
+        List<List<String>> expected = new ArrayList<>(List.of(
+                List.of("Date", "Operation", "Amount", "Balance")));
+        this.statement.lines()
+                .stream()
+                .map(l -> List.of(l.date().toString(), l.operation(), l.amount().toString(), l.balance().toString()))
+                .forEach(l -> expected.add(l));
+        assertThat(expected).isEqualTo(actualLines);
     }
 
 }
