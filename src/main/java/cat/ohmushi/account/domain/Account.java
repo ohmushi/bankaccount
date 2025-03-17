@@ -1,5 +1,6 @@
 package cat.ohmushi.account.domain;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -71,9 +72,9 @@ public final class Account implements DomainEntityType {
         try {
             this.ensureValidAmount(amount);
             this.balance = this.balance.add(amount);
-            this.addEvent(new MoneyDepositedInAccount(amount, date));
-        } catch (Exception e) {
-            this.addEvent(new TransfertFailed(e, LocalDateTime.now()));
+            this.addEvent(new MoneyDepositedInAccount(amount, date, this.balance));
+        } catch (AccountException e) {
+            this.addEvent(new TransfertFailed(e, date, this.balance));
         }
     }
 
@@ -83,13 +84,13 @@ public final class Account implements DomainEntityType {
         }
     }
 
-    public void withdraw(Money amount) {
+    public void withdraw(Money amount, LocalDateTime date) {
         try {
             this.ensureValidAmount(amount);
             this.balance = this.balance.minus(amount);
-            this.addEvent(new MoneyWithdrawnFromAccount(amount, LocalDateTime.now()));
-        } catch (Exception e) {
-            this.addEvent(new TransfertFailed(e, LocalDateTime.now()));
+            this.addEvent(new MoneyWithdrawnFromAccount(amount, date, this.balance));
+        } catch (AccountException e) {
+            this.addEvent(new TransfertFailed(e, date, this.balance));
         }
     }
 

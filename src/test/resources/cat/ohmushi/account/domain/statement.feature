@@ -17,9 +17,7 @@ Feature: Bank account statement consultation
     Given an account with an initial balance of €1000
     When I check my statement
     Then my statement should be:
-      | Date | Operation       | Amount | Balance |
-      | ---- | ---------       | ------ | ------- |
-      |      | No transactions | -      | €1000   |
+      | Date | Operation | Amount | Balance |
 
   Scenario: Display statement with only withdrawals
     Given an account with an initial balance of €1000
@@ -40,15 +38,6 @@ Feature: Bank account statement consultation
       | Date       | Operation | Amount | Balance |
       | 01/03/2025 | Deposit   | +€400  | €1400   |
       | 02/03/2025 | Deposit   | +€600  | €2000   |
-  # Scenario: Display statement with transactions in different currencies (not allowed)
-  #   Given an account with an initial balance of €1000
-  #   And a deposit of $500 on 01/03/2025
-  #   When I check my statement
-  #   Then the operation is declined
-  #   And my statement should be:
-  #     | Date | Operation             | Amount | Balance |
-  #     | ---- | ---------             | ------ | ------- |
-  #     |      | No valid transactions | -      | €1000   |
 
   Scenario: Display statement after a balance reaches zero
     Given an account with an initial balance of €500
@@ -64,7 +53,7 @@ Feature: Bank account statement consultation
     When I check my statement
     Then my statement should be:
       | Date       | Operation  | Amount | Balance |
-      | 01/03/2025 | Withdrawal | -€600  | €500    |
+      | 01/03/2025 | Withdrawal | -€600  | -€100   |
 
   Scenario: Display statement with multiple transactions on the same day
     Given an account with an initial balance of €1000

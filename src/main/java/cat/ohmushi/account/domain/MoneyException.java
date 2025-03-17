@@ -3,7 +3,7 @@ package cat.ohmushi.account.domain;
 import cat.ohmushi.shared.annotations.DomainException;
 
 @DomainException
-class MoneyException extends RuntimeException {
+class MoneyException extends AccountException {
     public MoneyException(String msg) {
         super(msg);
     }

@@ -1,23 +1,20 @@
 package cat.ohmushi.account.domain;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import static java.time.LocalDateTime.now;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
-import cat.ohmushi.account.domain.AccountStatement.AccountStatementLine;
-
-import static java.time.LocalDateTime.now;
 
 public class StepDefinitions {
     private Account account;
@@ -49,7 +46,11 @@ public class StepDefinitions {
 
     @ParameterType("(\\d{2})\\/(\\d{2})\\/(\\d{4})")
     public LocalDateTime date(String month, String day, String year) {
-        return LocalDateTime.now();
+        return LocalDateTime.of(
+            Integer.parseInt(year), 
+            Integer.parseInt(month), 
+            Integer.parseInt(day), 
+            0, 0);
     }
 
     @Given("an account with a(n initial) balance of {money}")
@@ -64,9 +65,8 @@ public class StepDefinitions {
     public void a_deposit_or_withdraw_on_date(String action, Money amount, LocalDateTime ondate) {
         switch (action) {
             case "deposit" -> this.account.deposit(amount, ondate);
-            case "withdraw" -> this.account.withdraw(amount);
+            case "withdraw" -> this.account.withdraw(amount, ondate);
         }
-        ;
     }
 
     @Given("I attempt to create an account with an initial balance of {money}")
@@ -85,9 +85,8 @@ public class StepDefinitions {
     public void I_deposit_or_withdraw(String action, Money amount) {
         switch (action) {
             case "deposit" -> this.account.deposit(amount, now());
-            case "withdraw" -> this.account.withdraw(amount);
+            case "withdraw" -> this.account.withdraw(amount, now());
         }
-        ;
     }
 
     @When("I check my statement")
@@ -126,13 +125,12 @@ public class StepDefinitions {
     @Then("my statement should be:")
     public void it_should_display(DataTable displayed) {
         List<List<String>> actualLines = displayed.asLists(String.class);
-        List<List<String>> expected = new ArrayList<>(List.of(
-                List.of("Date", "Operation", "Amount", "Balance")));
-        this.statement.lines()
+        var columns = Stream.of(
+                List.of("Date", "Operation", "Amount", "Balance"));
+        var expectedLines = this.statement.lines()
                 .stream()
-                .map(l -> List.of(l.date().toString(), l.operation(), l.amount().toString(), l.balance().toString()))
-                .forEach(l -> expected.add(l));
-        assertThat(expected).isEqualTo(actualLines);
+                .map(AccountStatementLine::format);
+        assertThat(Stream.concat(columns, expectedLines).toList()).isEqualTo(actualLines);
     }
 
 }

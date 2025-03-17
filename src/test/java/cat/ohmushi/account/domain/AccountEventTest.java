@@ -1,10 +1,9 @@
 package cat.ohmushi.account.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.time.LocalDateTime;
 import static java.time.LocalDateTime.now;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -39,20 +38,20 @@ public class AccountEventTest {
         .usingRecursiveFieldByFieldElementComparator(ignoreDates)
         .containsExactly(
             new AccountCreated(id, zeroEuro, Currency.EUR, now()),
-            new MoneyDepositedInAccount(tenEuro, now()));
+            new MoneyDepositedInAccount(tenEuro, now(), tenEuro));
   }
 
   @Test
   void withdrawFromAccountShouldHaveWithdrawnEvent() {
     var account = Account.create(id, zeroEuro, Currency.EUR);
     account.deposit(tenEuro, now());
-    account.withdraw(tenEuro);
+    account.withdraw(tenEuro, now());
 
     assertThat(account.events())
         .usingRecursiveFieldByFieldElementComparator(ignoreDates)
         .containsExactly(
             new AccountCreated(id, zeroEuro, Currency.EUR, now()),
-            new MoneyDepositedInAccount(tenEuro, now()),
-            new MoneyWithdrawnFromAccount(tenEuro, now()));
+            new MoneyDepositedInAccount(tenEuro, now(), tenEuro),
+            new MoneyWithdrawnFromAccount(tenEuro, now(), zeroEuro));
   }
 }
