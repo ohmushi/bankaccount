@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import static java.time.LocalDateTime.now;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -125,12 +124,7 @@ public class StepDefinitions {
     @Then("my statement should be:")
     public void it_should_display(DataTable displayed) {
         List<List<String>> actualLines = displayed.asLists(String.class);
-        var columns = Stream.of(
-                List.of("Date", "Operation", "Amount", "Balance"));
-        var expectedLines = this.statement.lines()
-                .stream()
-                .map(AccountStatementLine::format);
-        assertThat(Stream.concat(columns, expectedLines).toList()).isEqualTo(actualLines);
+        assertThat(this.statement.formatted()).isEqualTo(actualLines);
     }
 
 }

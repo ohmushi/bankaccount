@@ -16,7 +16,7 @@ record AccountStatementLine(
         String operation,
         Money amount,
         Money balance,
-        AccountException error) {
+        AccountDomainException error) {
 
     public static Optional<AccountStatementLine> fromAccountEvent(AccountEvent e) {
         Money balance = e.newBalance();
@@ -34,7 +34,7 @@ record AccountStatementLine(
             return Optional.empty();
         }
 
-        AccountException error = switch (e) {
+        AccountDomainException error = switch (e) {
             case TransfertFailed failed ->
                 failed.reason();
             default ->
@@ -77,8 +77,15 @@ record AccountStatementLine(
             default ->
                 "";
         };
-        String amount = String.format("%s€%d", amountSign, l.amount.amount().abs().intValue());
-        String balance = String.format("%s€%d", balanceSign, l.balance.amount().abs().intValue());
+
+        String currency = switch(l.balance.currency()) {
+            case Currency.EUR -> "€";
+            case Currency.USD -> "$";
+            default -> "";
+        };
+
+        String amount = amountSign + currency + l.amount.amount().abs().intValue();
+        String balance = balanceSign + currency + l.balance.amount().abs().intValue();
         return List.of(date, l.operation, amount, balance);
     }
 }

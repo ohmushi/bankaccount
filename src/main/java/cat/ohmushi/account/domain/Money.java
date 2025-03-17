@@ -9,7 +9,7 @@ import cat.ohmushi.shared.OptionalUtils;
 import cat.ohmushi.shared.annotations.Value;
 
 @Value
-final class Money {
+public final class Money {
 
     private final BigDecimal amount;
     private final Currency currency;

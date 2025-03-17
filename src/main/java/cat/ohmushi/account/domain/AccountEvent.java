@@ -75,7 +75,7 @@ interface AccountEvent extends Event<Account> {
 
   @Value
   record TransfertFailed (
-    AccountException reason,
+    AccountDomainException reason,
     LocalDateTime eventDate,
     Money balanceBeforeFail
   ) implements AccountEvent {

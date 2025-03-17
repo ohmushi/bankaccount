@@ -7,18 +7,18 @@ import cat.ohmushi.shared.OptionalUtils;
 import cat.ohmushi.shared.annotations.DomainEntityId;
 
 @DomainEntityId
-final class AccountId {
+public final class AccountId {
 
     private final String value;
 
-    private AccountId(String value) throws AccountException {
+    private AccountId(String value) throws AccountDomainException {
         try {
             this.value = Objects.requireNonNull(value).trim().toLowerCase();
             if (this.value.isEmpty()) {
                 throw new IllegalArgumentException();
             }
         } catch (Exception e) {
-            throw new AccountException("Cannot create an id with null or empty value.");
+            throw new AccountDomainException("Cannot create an id with null or empty value.");
         }
     }
 

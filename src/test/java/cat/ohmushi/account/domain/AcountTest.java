@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
-import cat.ohmushi.account.domain.AccountException.TransfertException;
+import cat.ohmushi.account.domain.AccountDomainException.TransfertException;
 
 public class AcountTest {
 
@@ -29,7 +29,7 @@ public class AcountTest {
     private static Account getAccountWithTenEuros() {
         try {
             return Account.create(exampleId, tenEuros, Currency.EUR);
-        } catch (AccountException ex) {
+        } catch (AccountDomainException ex) {
             return null;
         }
     }
@@ -49,7 +49,7 @@ public class AcountTest {
     void shouldNotCreateAccountWithNegativeBalance() {
         final var negativeBalance = Money.of(BigDecimal.valueOf(-1), Currency.EUR).get();
         assertThatThrownBy(() -> Account.create(exampleId, negativeBalance, Currency.EUR))
-                .isInstanceOf(AccountException.class)
+                .isInstanceOf(AccountDomainException.class)
                 .hasMessage("Cannot create an account with a strictly negative balance.");
     }
 
@@ -104,14 +104,14 @@ public class AcountTest {
     @Test
     void createAccountWithNullIdOrBalanceShouldThrowException() {
         assertThatThrownBy(() -> Account.create(null, tenEuros, Currency.EUR))
-                .isInstanceOf(AccountException.class)
+                .isInstanceOf(AccountDomainException.class)
                 .hasMessage("Account cannot have null field.");
     }
 
     @Test
     void createAccountWithBalanceCurrencyDifferentThantAccountCurrencyShouldThrowException() {
         assertThatThrownBy(() -> Account.create(exampleId, tenEuros, Currency.USD))
-                .isInstanceOf(AccountException.class)
+                .isInstanceOf(AccountDomainException.class)
                 .hasMessage("Cannot create account in USD with EUR initial balance.");
     }
 
