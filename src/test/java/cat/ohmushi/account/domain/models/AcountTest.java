@@ -1,4 +1,4 @@
-package cat.ohmushi.account.domain;
+package cat.ohmushi.account.domain.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,8 +11,9 @@ import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguratio
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
-import cat.ohmushi.account.domain.AccountDomainException.TransfertException;
+import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.domain.exceptions.AccountDomainException;
+import cat.ohmushi.account.domain.exceptions.TransfertException;
 
 public class AcountTest {
 

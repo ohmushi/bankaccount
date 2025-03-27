@@ -1,12 +1,13 @@
-package cat.ohmushi.account.application;
+package cat.ohmushi.account.exposition.formatters;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cat.ohmushi.account.domain.AccountStatement;
-import cat.ohmushi.account.domain.AccountStatementLine;
-import cat.ohmushi.account.domain.Currency;
+import cat.ohmushi.account.application.services.AccountStatementFormatter;
+import cat.ohmushi.account.domain.models.AccountStatement;
+import cat.ohmushi.account.domain.models.AccountStatementLine;
+import cat.ohmushi.account.domain.models.Currency;
 
 public class DefaultAccountStatementFormatter implements AccountStatementFormatter {
 

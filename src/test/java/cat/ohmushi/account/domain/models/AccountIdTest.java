@@ -1,4 +1,4 @@
-package cat.ohmushi.account.domain;
+package cat.ohmushi.account.domain.models;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

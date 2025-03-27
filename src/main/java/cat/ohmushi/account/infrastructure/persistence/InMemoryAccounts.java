@@ -1,12 +1,12 @@
-package cat.ohmushi.account.infrastructure;
+package cat.ohmushi.account.infrastructure.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import cat.ohmushi.account.domain.Account;
-import cat.ohmushi.account.domain.AccountId;
-import cat.ohmushi.account.domain.Accounts;
+import cat.ohmushi.account.domain.models.Account;
+import cat.ohmushi.account.domain.models.AccountId;
+import cat.ohmushi.account.domain.repositories.Accounts;
 
 public class InMemoryAccounts implements Accounts {
 
@@ -17,13 +17,17 @@ public class InMemoryAccounts implements Accounts {
     }
 
     @Override
-    public Optional<Account> findAccountByItsId(AccountId id) {
+    public Optional<Account> findAccountById(AccountId id) {
         return this.accounts.stream().filter(a -> a.id().equals(id)).findAny();
     }
 
     @Override
     public void save(Account account) {
+        var existing = this.findAccountById(account.id());
+        if (existing.isPresent()) {
+            this.accounts.removeIf(a -> a.id().equals(account.id()));
+        }
         this.accounts.add(account);
     }
-    
+
 }

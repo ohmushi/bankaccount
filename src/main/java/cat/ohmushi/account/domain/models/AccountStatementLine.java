@@ -1,12 +1,14 @@
-package cat.ohmushi.account.domain;
+package cat.ohmushi.account.domain.models;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import cat.ohmushi.account.domain.AccountEvent.AccountCreated;
-import cat.ohmushi.account.domain.AccountEvent.MoneyDepositedInAccount;
-import cat.ohmushi.account.domain.AccountEvent.MoneyWithdrawnFromAccount;
-import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.domain.events.AccountEvent;
+import cat.ohmushi.account.domain.events.AccountEvent.AccountCreated;
+import cat.ohmushi.account.domain.events.AccountEvent.MoneyDepositedInAccount;
+import cat.ohmushi.account.domain.events.AccountEvent.MoneyWithdrawnFromAccount;
+import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.shared.annotations.Value;
 
 @Value

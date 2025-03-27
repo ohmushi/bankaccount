@@ -1,6 +1,6 @@
-package cat.ohmushi.account.usecases;
+package cat.ohmushi.account.application.exceptions;
 
-import cat.ohmushi.account.domain.AccountId;
+import cat.ohmushi.account.domain.models.AccountId;
 
 public class AccountApplicationException extends RuntimeException{
     public AccountApplicationException(String msg) {

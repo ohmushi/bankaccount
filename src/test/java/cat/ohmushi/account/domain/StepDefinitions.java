@@ -9,9 +9,15 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import cat.ohmushi.account.application.AccountStatementFormatter;
-import cat.ohmushi.account.application.DefaultAccountStatementFormatter;
-import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.application.services.AccountStatementFormatter;
+import cat.ohmushi.account.domain.events.AccountEvent;
+import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.domain.models.Account;
+import cat.ohmushi.account.domain.models.AccountId;
+import cat.ohmushi.account.domain.models.AccountStatement;
+import cat.ohmushi.account.domain.models.Currency;
+import cat.ohmushi.account.domain.models.Money;
+import cat.ohmushi.account.exposition.formatters.DefaultAccountStatementFormatter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;

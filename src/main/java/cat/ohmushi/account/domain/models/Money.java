@@ -1,10 +1,11 @@
-package cat.ohmushi.account.domain;
+package cat.ohmushi.account.domain.models;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Optional;
 
-import cat.ohmushi.account.domain.MoneyException.CreationMoneyException;
+import cat.ohmushi.account.domain.exceptions.MoneyException;
+import cat.ohmushi.account.domain.exceptions.MoneyException.CreationMoneyException;
 import cat.ohmushi.shared.OptionalUtils;
 import cat.ohmushi.shared.annotations.Value;
 

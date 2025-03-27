@@ -1,9 +1,10 @@
-package cat.ohmushi.account.domain;
+package cat.ohmushi.account.domain.exceptions;
 
 import cat.ohmushi.shared.annotations.DomainException;
 
 @DomainException
-class MoneyException extends AccountDomainException {
+public class MoneyException extends AccountDomainException {
+
     public MoneyException(String msg) {
         super(msg);
     }
@@ -13,6 +14,7 @@ class MoneyException extends AccountDomainException {
     }
 
     public final static class CreationMoneyException extends MoneyException {
+
         public CreationMoneyException(String msg) {
             super(msg);
         }

@@ -1,34 +1,34 @@
-package cat.ohmushi.account.application;
+package cat.ohmushi.account.application.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import cat.ohmushi.account.domain.Account;
-import cat.ohmushi.account.domain.AccountId;
-import cat.ohmushi.account.domain.AccountStatement;
-import cat.ohmushi.account.domain.Accounts;
-import cat.ohmushi.account.domain.Money;
-import cat.ohmushi.account.usecases.AccountApplicationException;
-import cat.ohmushi.account.usecases.AccountApplicationException.AccountNotFoundException;
-import cat.ohmushi.account.usecases.DepositMoneyInAccount;
-import cat.ohmushi.account.usecases.GetStatementOfAccount;
-import cat.ohmushi.account.usecases.WithdrawMoneyFromAccount;
-
-public class AccountService implements DepositMoneyInAccount, WithdrawMoneyFromAccount, GetStatementOfAccount {
+import cat.ohmushi.account.application.exceptions.AccountApplicationException;
+import cat.ohmushi.account.application.exceptions.AccountApplicationException.AccountNotFoundException;
+import cat.ohmushi.account.application.usecases.DepositMoneyInAccount;
+import cat.ohmushi.account.application.usecases.GetStatementOfAccount;
+import cat.ohmushi.account.application.usecases.WithdrawMoneyFromAccount;
+import cat.ohmushi.account.domain.models.Account;
+import cat.ohmushi.account.domain.models.AccountId;
+import cat.ohmushi.account.domain.models.AccountStatement;
+import cat.ohmushi.account.domain.models.Money;
+import cat.ohmushi.account.domain.repositories.Accounts;
+public class AccountService implements
+        DepositMoneyInAccount,
+        WithdrawMoneyFromAccount,
+        GetStatementOfAccount {
 
     private final Accounts accounts;
-    private final AccountStatementFormatter formatter;
 
-    public AccountService(Accounts accounts, AccountStatementFormatter formatter) {
+    public AccountService(Accounts accounts) {
         this.accounts = Objects.requireNonNull(accounts);
-        this.formatter = Objects.isNull(formatter) ? new DefaultAccountStatementFormatter() : formatter;
     }
 
     private Account getAccount(String id) throws AccountApplicationException {
         AccountId accountId = AccountId.of(id)
                 .orElseThrow(() -> new AccountApplicationException("Invalid id " + id));
-        return this.accounts.findAccountByItsId(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
+        return this.accounts.findAccountById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
     }
 
     @Override
@@ -50,9 +50,9 @@ public class AccountService implements DepositMoneyInAccount, WithdrawMoneyFromA
     }
 
     @Override
-    public String getStatement(String id) throws AccountApplicationException {
+    public AccountStatement getStatement(String id) throws AccountApplicationException {
         Account account = this.getAccount(id);
-        return this.formatter.format(AccountStatement.forAccount(account));
+        return AccountStatement.forAccount(account);
     }
 
 }

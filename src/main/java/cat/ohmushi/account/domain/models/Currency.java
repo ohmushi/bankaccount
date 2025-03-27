@@ -1,4 +1,4 @@
-package cat.ohmushi.account.domain;
+package cat.ohmushi.account.domain.models;
 
 import java.util.Objects;
 import java.util.Optional;

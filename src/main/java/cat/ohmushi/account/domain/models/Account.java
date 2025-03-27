@@ -1,17 +1,18 @@
-package cat.ohmushi.account.domain;
+package cat.ohmushi.account.domain.models;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import cat.ohmushi.account.domain.AccountEvent.AccountCreated;
-import cat.ohmushi.account.domain.AccountEvent.MoneyDepositedInAccount;
-import cat.ohmushi.account.domain.AccountEvent.MoneyWithdrawnFromAccount;
-import cat.ohmushi.account.domain.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.domain.events.AccountEvent;
+import cat.ohmushi.account.domain.events.AccountEvent.AccountCreated;
+import cat.ohmushi.account.domain.events.AccountEvent.MoneyDepositedInAccount;
+import cat.ohmushi.account.domain.events.AccountEvent.MoneyWithdrawnFromAccount;
+import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.shared.annotations.DomainEntity;
 import cat.ohmushi.shared.annotations.DomainEntity.DomainEntityType;
 
@@ -28,7 +29,7 @@ public final class Account implements DomainEntityType {
             this.id = Objects.requireNonNull(id);
             this.balance = Objects.requireNonNull(balance);
             this.currency = Objects.requireNonNull(currency);
-            this.events = Objects.isNull(events) ? new ArrayList<AccountEvent>() : events;
+            this.events = Objects.isNull(events) ? new ArrayList<>() : events;
         } catch (NullPointerException e) {
             throw new AccountDomainException("Account cannot have null field.");
         }

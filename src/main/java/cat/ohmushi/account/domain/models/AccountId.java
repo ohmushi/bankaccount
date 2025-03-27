@@ -1,8 +1,9 @@
-package cat.ohmushi.account.domain;
+package cat.ohmushi.account.domain.models;
 
 import java.util.Objects;
 import java.util.Optional;
 
+import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.shared.OptionalUtils;
 import cat.ohmushi.shared.annotations.DomainEntityId;
 

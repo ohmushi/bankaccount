@@ -1,4 +1,4 @@
-package cat.ohmushi.account.domain;
+package cat.ohmushi.account.domain.models;
 
 import java.time.LocalDateTime;
 import static java.time.LocalDateTime.now;
@@ -7,9 +7,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
 
-import cat.ohmushi.account.domain.AccountEvent.AccountCreated;
-import cat.ohmushi.account.domain.AccountEvent.MoneyDepositedInAccount;
-import cat.ohmushi.account.domain.AccountEvent.MoneyWithdrawnFromAccount;
+import cat.ohmushi.account.domain.events.AccountEvent.AccountCreated;
+import cat.ohmushi.account.domain.events.AccountEvent.MoneyDepositedInAccount;
+import cat.ohmushi.account.domain.events.AccountEvent.MoneyWithdrawnFromAccount;
 
 public class AccountEventTest {
 
