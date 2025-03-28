@@ -2,11 +2,11 @@ package cat.ohmushi.account.domain.events;
 
 import java.time.LocalDateTime;
 
+import cat.ohmushi.account.domain.account.Account;
+import cat.ohmushi.account.domain.account.AccountId;
+import cat.ohmushi.account.domain.account.Currency;
+import cat.ohmushi.account.domain.account.Money;
 import cat.ohmushi.account.domain.exceptions.AccountDomainException;
-import cat.ohmushi.account.domain.models.Account;
-import cat.ohmushi.account.domain.models.AccountId;
-import cat.ohmushi.account.domain.models.Currency;
-import cat.ohmushi.account.domain.models.Money;
 import cat.ohmushi.shared.Event;
 import cat.ohmushi.shared.annotations.DomainEvent;
 import cat.ohmushi.shared.annotations.Value;

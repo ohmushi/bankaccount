@@ -1,8 +1,10 @@
-package cat.ohmushi.account.domain.models;
+package cat.ohmushi.account.domain.account;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
+
+import cat.ohmushi.account.domain.account.AccountId;
 
 final class AccountIdTest {
     @Test

@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cat.ohmushi.account.application.services.AccountStatementFormatter;
-import cat.ohmushi.account.domain.models.AccountStatement;
-import cat.ohmushi.account.domain.models.AccountStatementLine;
-import cat.ohmushi.account.domain.models.Currency;
+import cat.ohmushi.account.domain.account.AccountStatement;
+import cat.ohmushi.account.domain.account.AccountStatementLine;
+import cat.ohmushi.account.domain.account.Currency;
 
 public class DefaultAccountStatementFormatter implements AccountStatementFormatter {
 

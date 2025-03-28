@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import cat.ohmushi.account.domain.models.Account;
-import cat.ohmushi.account.domain.models.AccountId;
+import cat.ohmushi.account.domain.account.Account;
+import cat.ohmushi.account.domain.account.AccountId;
 import cat.ohmushi.account.domain.repositories.Accounts;
 
 public class InMemoryAccounts implements Accounts {

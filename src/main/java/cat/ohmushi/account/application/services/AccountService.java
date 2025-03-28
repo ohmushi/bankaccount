@@ -9,11 +9,14 @@ import cat.ohmushi.account.application.exceptions.AccountApplicationException.Ac
 import cat.ohmushi.account.application.usecases.DepositMoneyInAccount;
 import cat.ohmushi.account.application.usecases.GetStatementOfAccount;
 import cat.ohmushi.account.application.usecases.WithdrawMoneyFromAccount;
-import cat.ohmushi.account.domain.models.Account;
-import cat.ohmushi.account.domain.models.AccountId;
-import cat.ohmushi.account.domain.models.AccountStatement;
-import cat.ohmushi.account.domain.models.Money;
+import cat.ohmushi.account.domain.account.Account;
+import cat.ohmushi.account.domain.account.AccountId;
+import cat.ohmushi.account.domain.account.AccountStatement;
+import cat.ohmushi.account.domain.account.Money;
+import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.account.domain.repositories.Accounts;
+
 public class AccountService implements
         DepositMoneyInAccount,
         WithdrawMoneyFromAccount,
@@ -35,8 +38,14 @@ public class AccountService implements
     public void withdraw(String accountId, BigDecimal amount) throws AccountApplicationException {
         Account account = this.getAccount(accountId);
         Money money = Money.of(amount, account.currency()).orElseThrow(() -> new AccountApplicationException("Invalid money " + String.valueOf(amount)));
+        var now = LocalDateTime.now();
 
-        account.withdraw(money, LocalDateTime.now());
+        try {
+            account.withdraw(money, now);
+        } catch (AccountDomainException e) {
+            account.addEvent(new TransfertFailed(e, now, account.balance()));
+        }
+
         this.accounts.save(account);
     }
 
@@ -44,8 +53,14 @@ public class AccountService implements
     public void deposit(String accountId, BigDecimal amount) throws AccountApplicationException {
         Account account = this.getAccount(accountId);
         Money money = Money.of(amount, account.currency()).orElseThrow(() -> new AccountApplicationException("Invalid money " + String.valueOf(amount)));
+        var now = LocalDateTime.now();
 
-        account.deposit(money, LocalDateTime.now());
+        try {
+            account.deposit(money, now);
+        } catch (AccountDomainException e) {
+            account.addEvent(new TransfertFailed(e, now, account.balance()));
+        }
+
         this.accounts.save(account);
     }
 

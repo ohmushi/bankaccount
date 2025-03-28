@@ -1,4 +1,4 @@
-package cat.ohmushi.account.domain.models;
+package cat.ohmushi.account.domain.account;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,7 +11,6 @@ import cat.ohmushi.account.domain.events.AccountEvent;
 import cat.ohmushi.account.domain.events.AccountEvent.AccountCreated;
 import cat.ohmushi.account.domain.events.AccountEvent.MoneyDepositedInAccount;
 import cat.ohmushi.account.domain.events.AccountEvent.MoneyWithdrawnFromAccount;
-import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
 import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.shared.annotations.DomainEntity;
 import cat.ohmushi.shared.annotations.DomainEntity.DomainEntityType;
@@ -73,14 +72,10 @@ public final class Account implements DomainEntityType {
                 .orElse(false);
     }
 
-    public void deposit(Money amount, LocalDateTime date){
-        try {
-            this.ensureValidAmount(amount);
-            this.balance = this.balance.add(amount);
-            this.addEvent(new MoneyDepositedInAccount(amount, date, this.balance));
-        } catch (AccountDomainException e) {
-            this.addEvent(new TransfertFailed(e, date, this.balance));
-        }
+    public void deposit(Money amount, LocalDateTime date) throws AccountDomainException {
+        this.ensureValidAmount(amount);
+        this.balance = this.balance.add(amount);
+        this.addEvent(new MoneyDepositedInAccount(amount, date, this.balance));
     }
 
     public void addEvent(AccountEvent e) {
@@ -89,14 +84,10 @@ public final class Account implements DomainEntityType {
         }
     }
 
-    public void withdraw(Money amount, LocalDateTime date) {
-        try {
-            this.ensureValidAmount(amount);
-            this.balance = this.balance.minus(amount);
-            this.addEvent(new MoneyWithdrawnFromAccount(amount, date, this.balance));
-        } catch (AccountDomainException e) {
-            this.addEvent(new TransfertFailed(e, date, this.balance));
-        }
+    public void withdraw(Money amount, LocalDateTime date) throws AccountDomainException {
+        this.ensureValidAmount(amount);
+        this.balance = this.balance.minus(amount);
+        this.addEvent(new MoneyWithdrawnFromAccount(amount, date, this.balance));
     }
 
     private void ensureValidAmount(Money amount) throws AccountDomainException {

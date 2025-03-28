@@ -2,8 +2,8 @@ package cat.ohmushi.account.domain.repositories;
 
 import java.util.Optional;
 
-import cat.ohmushi.account.domain.models.Account;
-import cat.ohmushi.account.domain.models.AccountId;
+import cat.ohmushi.account.domain.account.Account;
+import cat.ohmushi.account.domain.account.AccountId;
 
 public interface Accounts {
 

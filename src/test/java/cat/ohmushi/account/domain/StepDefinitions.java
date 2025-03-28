@@ -10,13 +10,14 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import cat.ohmushi.account.application.services.AccountStatementFormatter;
+import cat.ohmushi.account.domain.account.Account;
+import cat.ohmushi.account.domain.account.AccountId;
+import cat.ohmushi.account.domain.account.AccountStatement;
+import cat.ohmushi.account.domain.account.Currency;
+import cat.ohmushi.account.domain.account.Money;
 import cat.ohmushi.account.domain.events.AccountEvent;
 import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
-import cat.ohmushi.account.domain.models.Account;
-import cat.ohmushi.account.domain.models.AccountId;
-import cat.ohmushi.account.domain.models.AccountStatement;
-import cat.ohmushi.account.domain.models.Currency;
-import cat.ohmushi.account.domain.models.Money;
+import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.account.exposition.formatters.DefaultAccountStatementFormatter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
@@ -25,6 +26,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class StepDefinitions {
+
     private Account account;
     private Exception exception;
     private AccountStatement statement;
@@ -33,9 +35,12 @@ public class StepDefinitions {
     @ParameterType("([-+]?)([€$])(\\d+)")
     public Money money(String negative, String c, String a) throws Exception {
         Currency currency = switch (c) {
-            case "€" -> Currency.EUR;
-            case "$" -> Currency.USD;
-            default -> throw new Exception("Unhandled currency '" + c + "'.");
+            case "€" ->
+                Currency.EUR;
+            case "$" ->
+                Currency.USD;
+            default ->
+                throw new Exception("Unhandled currency '" + c + "'.");
         };
         var amount = new BigDecimal(a).multiply(BigDecimal.valueOf(negative.isEmpty() ? 1 : -1));
         return Money.of(amount, currency).get();
@@ -47,9 +52,12 @@ public class StepDefinitions {
             throw new Exception("Action is null.");
         }
         return switch (a) {
-            case "deposit" -> "deposit";
-            case "withdraw", "withdrawal" -> "withdraw";
-            default -> throw new Exception("Unhandled action '" + a + "'.");
+            case "deposit" ->
+                "deposit";
+            case "withdraw", "withdrawal" ->
+                "withdraw";
+            default ->
+                throw new Exception("Unhandled action '" + a + "'.");
         };
     }
 
@@ -73,8 +81,10 @@ public class StepDefinitions {
     @Given("a {action} of {money} on {date}")
     public void a_deposit_or_withdraw_on_date(String action, Money amount, LocalDateTime ondate) {
         switch (action) {
-            case "deposit" -> this.account.deposit(amount, ondate);
-            case "withdraw" -> this.account.withdraw(amount, ondate);
+            case "deposit" ->
+                this.account.deposit(amount, ondate);
+            case "withdraw" ->
+                this.account.withdraw(amount, ondate);
         }
     }
 
@@ -93,8 +103,10 @@ public class StepDefinitions {
     @When("I {action} {money}")
     public void I_deposit_or_withdraw(String action, Money amount) {
         switch (action) {
-            case "deposit" -> this.account.deposit(amount, now());
-            case "withdraw" -> this.account.withdraw(amount, now());
+            case "deposit" ->
+                this.account.deposit(amount, now());
+            case "withdraw" ->
+                this.account.withdraw(amount, now());
         }
     }
 
@@ -105,7 +117,11 @@ public class StepDefinitions {
 
     @When("I try to {action} {money}")
     public void I_try_to_deposit(String action, Money amount) {
-        this.I_deposit_or_withdraw(action, amount);
+        try {
+            this.I_deposit_or_withdraw(action, amount);
+        } catch (Exception e) {
+            this.exception = e;
+        }
     }
 
     @Then("my balance should be {money}")
@@ -115,10 +131,7 @@ public class StepDefinitions {
 
     @Then("the operation is declined")
     public void the_operation_is_declined() {
-        if (Objects.isNull(this.exception)) {
-            var events = account.events().stream().map((AccountEvent e) -> e.getClass().getName()).toList();
-            assertThat(events).contains(TransfertFailed.class.getName());
-        }
+        assertThat(this.exception).isInstanceOf(AccountDomainException.class);
     }
 
     @Then("my balance should remain {money}")

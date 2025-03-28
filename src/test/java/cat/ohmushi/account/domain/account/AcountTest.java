@@ -1,4 +1,4 @@
-package cat.ohmushi.account.domain.models;
+package cat.ohmushi.account.domain.account;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,7 +11,6 @@ import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguratio
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
 import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.account.domain.exceptions.TransfertException;
 
@@ -22,10 +21,6 @@ public class AcountTest {
     private final static Money tenDollars = Money.of(10, Currency.USD).get();
     private final static Money zeroEuros = Money.of(0, Currency.EUR).get();
     private static Account accountWithTenEuros = getAccountWithTenEuros();
-
-    private final static RecursiveComparisonConfiguration ignoreDates = RecursiveComparisonConfiguration.builder()
-      .withIgnoredFieldsOfTypes(LocalDateTime.class)
-      .build();
 
     private static Account getAccountWithTenEuros() {
         try {
@@ -62,20 +57,16 @@ public class AcountTest {
 
     @Test
     void shoulNotDepositZero() {
-        accountWithTenEuros.deposit(zeroEuros, now());
-        assertThat(accountWithTenEuros.events())
-                .usingRecursiveFieldByFieldElementComparator(ignoreDates)
-                .hasSize(2)
-                .contains(new TransfertFailed(new TransfertException("Money transferred cannot be negative."), now(), tenEuros));
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(zeroEuros, now()))
+                .isInstanceOf(TransfertException.class)
+                .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulNotDepositStrictlyNegativeAmount() {
-        accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now());
-        assertThat(accountWithTenEuros.events())
-                .usingRecursiveFieldByFieldElementComparator(ignoreDates)
-                .hasSize(2)
-                .contains(new TransfertFailed(new TransfertException("Money transferred cannot be negative."), now(), tenEuros));
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now()))
+                .isInstanceOf(TransfertException.class)
+                .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
@@ -86,20 +77,16 @@ public class AcountTest {
 
     @Test
     void shoulNotWithdrawZero() {
-        accountWithTenEuros.withdraw(zeroEuros, now());
-        assertThat(accountWithTenEuros.events())
-                .usingRecursiveFieldByFieldElementComparator(ignoreDates)
-                .hasSize(2)
-                .contains(new TransfertFailed(new TransfertException("Money transferred cannot be negative."), now(), tenEuros));
+        assertThatThrownBy(() -> accountWithTenEuros.withdraw(zeroEuros, now()))
+                .isInstanceOf(TransfertException.class)
+                .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulNotWithdrawStrictlyNegativeAmount() {
-        accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now());
-        assertThat(accountWithTenEuros.events())
-                .usingRecursiveFieldByFieldElementComparator(ignoreDates)
-                .hasSize(2)
-                .contains(new TransfertFailed(new TransfertException("Money transferred cannot be negative."), now(), tenEuros));
+        assertThatThrownBy(() -> accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now()))
+                .isInstanceOf(TransfertException.class)
+                .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
@@ -118,19 +105,15 @@ public class AcountTest {
 
     @Test
     void depositDollarsToEuroAccountShouldThrowExcention() {
-        accountWithTenEuros.deposit(tenDollars, now());
-        assertThat(accountWithTenEuros.events())
-                .usingRecursiveFieldByFieldElementComparator(ignoreDates)
-                .hasSize(2)
-                .contains(new TransfertFailed(new TransfertException("Cannot transfert USD to EUR account."), now(),tenEuros));
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(tenDollars, now()))
+                .isInstanceOf(TransfertException.class)
+                .hasMessage("Cannot transfert USD to EUR account.");
     }
 
     @Test
     void withdrawDollarsToEuroAccountShouldThrowExcention() {
-        accountWithTenEuros.withdraw(tenDollars, now());
-        assertThat(accountWithTenEuros.events())
-                .usingRecursiveFieldByFieldElementComparator(ignoreDates)
-                .hasSize(2)
-                .contains(new TransfertFailed(new TransfertException("Cannot transfert USD to EUR account."), now(), tenEuros));
+        assertThatThrownBy(() -> accountWithTenEuros.withdraw(tenDollars, now()))
+                .isInstanceOf(TransfertException.class)
+                .hasMessage("Cannot transfert USD to EUR account.");
     }
 }

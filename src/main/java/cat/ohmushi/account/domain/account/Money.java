@@ -1,4 +1,4 @@
-package cat.ohmushi.account.domain.models;
+package cat.ohmushi.account.domain.account;
 
 import java.math.BigDecimal;
 import java.util.Objects;
