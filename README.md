@@ -22,7 +22,7 @@ cd bankaccount
 
 > remplacer par mvnw.cmd sur Windows
 
-> ou mvn sans le wrapper
+> ou utiliser mvn sans le wrapper
 
 ## 🚀 Description du Problème
 
@@ -82,16 +82,14 @@ Le projet suit une structure de projet qui respecte les principes de Clean Archi
 L'architecture du projet suit les principes du Domain-Driven Design (DDD) pour garantir une séparation claire entre la logique métier et les préoccupations techniques.
 
 * Le dossier `domain` contient les modèles métier, les événements et les exceptions propres au domaine bancaire
-* L’application ne dépend pas du framework : les règles métier sont autonomes et peuvent être testées indépendamment de l’infrastructure
-* Le cœur du métier est isolé des détails d’implémentation comme la base de données ou l’exposition via REST
+* L’application ne dépend pas de framework : les règles métier sont autonomes et peuvent être testées indépendamment de l’infrastructure
+* Le cœur du métier est isolé des détails d’implémentation comme la base de données ou l’exposition (api REST par exemple)
 
 Exemples dans le projet :
 
 * domain/account/Account.java définit un compte bancaire avec son identifiant, son solde et ses opérations.
 
 * domain/account/Money.java encapsule la logique de manipulation de montants en devises.
-
-* application/usecases/DepositMoneyInAccount.java définit le contrat  pour l’action de déposer de l’argent.
 
 Grâce à cette approche, l'application reste modulaire, testable et évolutive, car les modifications du métier n’impactent pas la couche technique et inversement.
 
@@ -143,7 +141,7 @@ Les erreurs domaines sont relatives à des violations de règle métier, par exe
 
 #### Erreurs applicatives
 
-Les erreurs applicatives relèvent plus d'une opération dans un service qui ne s'est pas déroulé normalement. Par explement déposer de l'argent dans un compte dont l'id n'est pas connu va lancer une `AccountNotFoundException`.
+Les erreurs applicatives relèvent plus d'une opération dans un service qui ne s'est pas déroulé normalement. Par exemple déposer de l'argent dans un compte dont l'id n'est pas connu va lancer une `AccountNotFoundException`.
 
 ## 🧪 Test
 
@@ -152,8 +150,8 @@ Les erreurs applicatives relèvent plus d'une opération dans un service qui ne 
 ```
 ### BDD avec Cucumber
 
-Cucumber pour le développement piloté par le comportement (BDD).
-Les 3 fonctionnalités principales, Dépôt, Retrait, Relevé (voir src/test/resources/cat/ohmushi/account/domain) ont des fichier `feature` qui sont des tests en Gherkin en langage naturel (given, when, then).
+J'ai utilisé Cucumber pour le développement piloté par le comportement (BDD).
+Les 3 fonctionnalités principales, Dépôt, Retrait, Relevé ont des fichier `feature` qui sont des tests écrits Gherkin (en langage naturel : given → when → then).
 Ces features garantissent que les règles métier sont bien définies et testées du point de vue de l'utilisateur final.
 
 Les features ressemblent par exemple à :
@@ -172,7 +170,7 @@ Scenario: Display statement after multiple transactions
 
 ### Tests unitaires
 
-JUnit & AssertJ sont utilisés pour les tests unitaires afin de garantir la fiabilité et la justesse des composants individuels. Le domaine a été testé en priorité.
+JUnit & AssertJ sont utilisés pour les tests unitaires afin de garantir la fiabilité et la justesse des composants individuels. Le domaine a été développé en premier et en TDD (Test-Driven Development : red → green → refactor), en combinaison avec les tests Cucumber.
 
 ## 💡 Décisions Techniques & Justifications
 
@@ -188,13 +186,12 @@ L’utilisation de Java est utilisé depuis plus de 25 ans dans des applications
 
 La version 21 est la dernière LTS (Long-Term Support) à ce jour (mars 2025), ce qui garantit un support à long terme avec des mises à jour de sécurité et de stabilité, et permet d’éviter les migrations fréquentes vers de nouvelles versions.
 
-### Architecture
+### Clean Architecture
 
 #### Avantages
 
 * ✔ Séparation claire des préoccupations, rendant le système plus facile à maintenir et à faire évoluer.
 * ✔ La logique métier reste indépendante des frameworks et de l'infrastructure, assurant une adaptabilité à long terme.
-* ✔ L'approche événementielle permet une plus grande flexibilité et une scalabilité potentielle.
 * ✔ Gestion robuste des erreurs pour éviter les défaillances silencieuses et assurer la fiabilité du système.
 * ✔ Stratégie de test bien définie pour garantir le bon fonctionnement et le comportement attendu du système.
 

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import cat.ohmushi.account.application.services.AccountService;
-import cat.ohmushi.account.application.services.AccountStatementFormatter;
 import cat.ohmushi.account.application.usecases.DepositMoneyInAccount;
 import cat.ohmushi.account.application.usecases.GetStatementOfAccount;
 import cat.ohmushi.account.application.usecases.WithdrawMoneyFromAccount;
@@ -12,6 +11,7 @@ import cat.ohmushi.account.domain.account.Account;
 import cat.ohmushi.account.domain.account.AccountId;
 import cat.ohmushi.account.domain.account.Currency;
 import cat.ohmushi.account.domain.account.Money;
+import cat.ohmushi.account.exposition.formatters.AccountStatementFormatter;
 import cat.ohmushi.account.exposition.formatters.DefaultAccountStatementFormatter;
 import cat.ohmushi.account.exposition.rest.AccountController;
 import cat.ohmushi.account.infrastructure.persistence.InMemoryAccounts;

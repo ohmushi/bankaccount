@@ -37,13 +37,14 @@ public class AccountService implements
     @Override
     public void withdraw(String accountId, BigDecimal amount) throws AccountApplicationException {
         Account account = this.getAccount(accountId);
-        Money money = Money.of(amount, account.currency()).orElseThrow(() -> new AccountApplicationException("Invalid money " + String.valueOf(amount)));
+        Money money = Money.of(amount, account.currency())
+                .orElseThrow(() -> new AccountApplicationException("Invalid money " + String.valueOf(amount)));
         var now = LocalDateTime.now();
 
         try {
             account.withdraw(money, now);
         } catch (AccountDomainException e) {
-            account.addEvent(new TransfertFailed(e, now, account.balance()));
+            account.pushHistory(new TransfertFailed(e, now, account.balance()));
         }
 
         this.accounts.save(account);
@@ -52,13 +53,14 @@ public class AccountService implements
     @Override
     public void deposit(String accountId, BigDecimal amount) throws AccountApplicationException {
         Account account = this.getAccount(accountId);
-        Money money = Money.of(amount, account.currency()).orElseThrow(() -> new AccountApplicationException("Invalid money " + String.valueOf(amount)));
+        Money money = Money.of(amount, account.currency())
+                .orElseThrow(() -> new AccountApplicationException("Invalid money " + String.valueOf(amount)));
         var now = LocalDateTime.now();
 
         try {
             account.deposit(money, now);
         } catch (AccountDomainException e) {
-            account.addEvent(new TransfertFailed(e, now, account.balance()));
+            account.pushHistory(new TransfertFailed(e, now, account.balance()));
         }
 
         this.accounts.save(account);

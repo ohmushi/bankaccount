@@ -7,10 +7,10 @@ import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import cat.ohmushi.account.domain.events.MoneyWithdrawnFromAccount;
 import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.account.domain.exceptions.TransfertException;
 
@@ -64,7 +64,8 @@ public class AcountTest {
 
     @Test
     void shoulNotDepositStrictlyNegativeAmount() {
-        assertThatThrownBy(() -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now()))
+        assertThatThrownBy(
+                () -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now()))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
@@ -84,7 +85,8 @@ public class AcountTest {
 
     @Test
     void shoulNotWithdrawStrictlyNegativeAmount() {
-        assertThatThrownBy(() -> accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now()))
+        assertThatThrownBy(
+                () -> accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now()))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
@@ -115,5 +117,26 @@ public class AcountTest {
         assertThatThrownBy(() -> accountWithTenEuros.withdraw(tenDollars, now()))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Cannot transfert USD to EUR account.");
+    }
+
+    @Test
+    void ensureGetLastAppendEventIsTheLastest() {
+        accountWithTenEuros.deposit(tenEuros, now());
+        var withdrawTime = now();
+        accountWithTenEuros.withdraw(Money.of(3, Currency.EUR).get(), LocalDateTime.from(withdrawTime));
+
+        assertThat(accountWithTenEuros.lastAppendEvent())
+                .isEqualTo(new MoneyWithdrawnFromAccount(
+                        Money.of(3, Currency.EUR).get(),
+                        LocalDateTime.from(withdrawTime)));
+    }
+
+    @Test
+    void ensureCreateAccountFromHistoryIsValid() {
+        var replayed = Account.fromHistory(accountWithTenEuros.history());
+        assertThat(replayed.id()).isEqualTo(accountWithTenEuros.id());
+        assertThat(replayed.balance()).isEqualTo(accountWithTenEuros.balance());
+        assertThat(replayed.currency()).isEqualTo(accountWithTenEuros.currency());
+        assertThat(replayed.history()).isEqualTo(accountWithTenEuros.history());
     }
 }

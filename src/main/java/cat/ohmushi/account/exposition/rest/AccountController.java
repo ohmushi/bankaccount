@@ -2,10 +2,10 @@ package cat.ohmushi.account.exposition.rest;
 
 import java.util.Objects;
 
-import cat.ohmushi.account.application.services.AccountStatementFormatter;
 import cat.ohmushi.account.application.usecases.DepositMoneyInAccount;
 import cat.ohmushi.account.application.usecases.GetStatementOfAccount;
 import cat.ohmushi.account.application.usecases.WithdrawMoneyFromAccount;
+import cat.ohmushi.account.exposition.formatters.AccountStatementFormatter;
 import cat.ohmushi.account.exposition.formatters.DefaultAccountStatementFormatter;
 
 public class AccountController {
@@ -19,8 +19,7 @@ public class AccountController {
             final DepositMoneyInAccount deposit,
             final WithdrawMoneyFromAccount withdraw,
             final GetStatementOfAccount getStatement,
-            final AccountStatementFormatter formatter
-    ) {
+            final AccountStatementFormatter formatter) {
         this.deposit = deposit;
         this.withdraw = withdraw;
         this.getStatement = getStatement;

@@ -7,8 +7,6 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
-import cat.ohmushi.account.domain.account.Currency;
-import cat.ohmushi.account.domain.account.Money;
 import cat.ohmushi.account.domain.exceptions.MoneyException;
 
 public class MoneyTest {

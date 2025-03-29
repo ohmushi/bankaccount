@@ -14,8 +14,6 @@ import cat.ohmushi.shared.annotations.Value;
 @DomainEvent
 public interface AccountEvent extends Event<Account> {
 
-    Money newBalance();
-
     @Value
     record AccountCreated(
             AccountId id,
@@ -25,25 +23,19 @@ public interface AccountEvent extends Event<Account> {
 
         @Override
         public Account play(Account a) {
-            return Account.create(this.id, this.balance, this.currency);
+            return Account.create(this.id, this.balance, this.currency, creationDate);
         }
 
         @Override
         public LocalDateTime getDate() {
             return this.creationDate;
         }
-
-        @Override
-        public Money newBalance() {
-            return this.balance;
-        }
     }
 
     @Value
     record MoneyDepositedInAccount(
             Money deposited,
-            LocalDateTime eventDate,
-            Money newBalance) implements AccountEvent {
+            LocalDateTime eventDate) implements AccountEvent {
 
         @Override
         public Account play(Account a) {
@@ -56,24 +48,6 @@ public interface AccountEvent extends Event<Account> {
             return this.eventDate;
         }
 
-    }
-
-    @Value
-    record MoneyWithdrawnFromAccount(
-            Money withdrawn,
-            LocalDateTime eventDate,
-            Money newBalance) implements AccountEvent {
-
-        @Override
-        public Account play(Account a) {
-            a.withdraw(this.withdrawn, this.eventDate);
-            return a;
-        }
-
-        @Override
-        public LocalDateTime getDate() {
-            return this.eventDate;
-        }
     }
 
     @Value
@@ -90,11 +64,6 @@ public interface AccountEvent extends Event<Account> {
         @Override
         public LocalDateTime getDate() {
             return this.eventDate;
-        }
-
-        @Override
-        public Money newBalance() {
-            return this.balanceBeforeFail;
         }
     }
 

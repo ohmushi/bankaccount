@@ -2,22 +2,21 @@ package cat.ohmushi.account.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Month;
+
 import static java.time.LocalDateTime.now;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import cat.ohmushi.account.application.services.AccountStatementFormatter;
 import cat.ohmushi.account.domain.account.Account;
 import cat.ohmushi.account.domain.account.AccountId;
 import cat.ohmushi.account.domain.account.AccountStatement;
 import cat.ohmushi.account.domain.account.Currency;
 import cat.ohmushi.account.domain.account.Money;
-import cat.ohmushi.account.domain.events.AccountEvent;
-import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
 import cat.ohmushi.account.domain.exceptions.AccountDomainException;
+import cat.ohmushi.account.exposition.formatters.AccountStatementFormatter;
 import cat.ohmushi.account.exposition.formatters.DefaultAccountStatementFormatter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
@@ -31,6 +30,7 @@ public class StepDefinitions {
     private Exception exception;
     private AccountStatement statement;
     private AccountStatementFormatter formatter = new DefaultAccountStatementFormatter();
+    private final static LocalDateTime accountCreationTime = LocalDateTime.of(2025, Month.JANUARY, 1, 0, 0, 0, 0);
 
     @ParameterType("([-+]?)([€$])(\\d+)")
     public Money money(String negative, String c, String a) throws Exception {
@@ -63,11 +63,12 @@ public class StepDefinitions {
 
     @ParameterType("(\\d{2})\\/(\\d{2})\\/(\\d{4})")
     public LocalDateTime date(String month, String day, String year) {
+        var now = now();
         return LocalDateTime.of(
                 Integer.parseInt(year),
                 Integer.parseInt(month),
                 Integer.parseInt(day),
-                0, 0);
+                now.getHour(), now.getMinute(), now.getSecond(), now.getNano());
     }
 
     @Given("an account with a(n initial) balance of {money}")
@@ -75,7 +76,8 @@ public class StepDefinitions {
         this.account = Account.create(
                 AccountId.of("id").get(),
                 balance,
-                balance.currency());
+                balance.currency(),
+                accountCreationTime);
     }
 
     @Given("a {action} of {money} on {date}")

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cat.ohmushi.account.application.services.AccountStatementFormatter;
 import cat.ohmushi.account.domain.account.AccountStatement;
 import cat.ohmushi.account.domain.account.AccountStatementLine;
 import cat.ohmushi.account.domain.account.Currency;
@@ -19,6 +18,7 @@ public class DefaultAccountStatementFormatter implements AccountStatementFormatt
 
         var lines = statement.lines()
                 .stream()
+                .filter(line -> !line.operation().isBlank())
                 .map(this::formatLineValues)
                 .map(this::addPaddingBetweenValues)
                 .map(this::joinLineValues);

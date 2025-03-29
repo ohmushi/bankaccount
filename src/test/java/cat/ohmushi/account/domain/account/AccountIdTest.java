@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import cat.ohmushi.account.domain.account.AccountId;
-
 final class AccountIdTest {
     @Test
     void shouldCreateAccountId() {

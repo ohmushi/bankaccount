@@ -7,13 +7,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
 
-import cat.ohmushi.account.domain.account.Account;
-import cat.ohmushi.account.domain.account.AccountId;
-import cat.ohmushi.account.domain.account.Currency;
-import cat.ohmushi.account.domain.account.Money;
 import cat.ohmushi.account.domain.events.AccountEvent.AccountCreated;
 import cat.ohmushi.account.domain.events.AccountEvent.MoneyDepositedInAccount;
-import cat.ohmushi.account.domain.events.AccountEvent.MoneyWithdrawnFromAccount;
+import cat.ohmushi.account.domain.events.MoneyWithdrawnFromAccount;
 
 public class AccountEventTest {
 
@@ -28,7 +24,7 @@ public class AccountEventTest {
   void createdAccountShouldHaveOneCreatedAccountEventInIt() {
     var account = Account.create(id, zeroEuro, Currency.EUR);
 
-    assertThat(account.events())
+    assertThat(account.history())
         .usingRecursiveFieldByFieldElementComparator(ignoreDates)
         .containsExactly(new AccountCreated(id, zeroEuro, Currency.EUR, now()));
   }
@@ -38,11 +34,11 @@ public class AccountEventTest {
     var account = Account.create(id, zeroEuro, Currency.EUR);
     account.deposit(tenEuro, now());
 
-    assertThat(account.events())
+    assertThat(account.history())
         .usingRecursiveFieldByFieldElementComparator(ignoreDates)
         .containsExactly(
             new AccountCreated(id, zeroEuro, Currency.EUR, now()),
-            new MoneyDepositedInAccount(tenEuro, now(), tenEuro));
+            new MoneyDepositedInAccount(tenEuro, now()));
   }
 
   @Test
@@ -51,11 +47,11 @@ public class AccountEventTest {
     account.deposit(tenEuro, now());
     account.withdraw(tenEuro, now());
 
-    assertThat(account.events())
+    assertThat(account.history())
         .usingRecursiveFieldByFieldElementComparator(ignoreDates)
         .containsExactly(
             new AccountCreated(id, zeroEuro, Currency.EUR, now()),
-            new MoneyDepositedInAccount(tenEuro, now(), tenEuro),
-            new MoneyWithdrawnFromAccount(tenEuro, now(), zeroEuro));
+            new MoneyDepositedInAccount(tenEuro, now()),
+            new MoneyWithdrawnFromAccount(tenEuro, now()));
   }
 }
