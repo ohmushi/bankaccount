@@ -8,9 +8,9 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
+import cat.ohmushi.account.domain.events.AccountCreated;
 import cat.ohmushi.account.domain.events.AccountEvent;
-import cat.ohmushi.account.domain.events.AccountEvent.AccountCreated;
-import cat.ohmushi.account.domain.events.AccountEvent.MoneyDepositedInAccount;
+import cat.ohmushi.account.domain.events.MoneyDepositedInAccount;
 import cat.ohmushi.account.domain.events.MoneyWithdrawnFromAccount;
 import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.shared.annotations.DomainEntity;

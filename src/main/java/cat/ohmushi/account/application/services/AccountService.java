@@ -13,7 +13,7 @@ import cat.ohmushi.account.domain.account.Account;
 import cat.ohmushi.account.domain.account.AccountId;
 import cat.ohmushi.account.domain.account.AccountStatement;
 import cat.ohmushi.account.domain.account.Money;
-import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.domain.events.TransfertFailed;
 import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.account.domain.repositories.Accounts;
 

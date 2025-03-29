@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
 
-import cat.ohmushi.account.domain.events.AccountEvent.AccountCreated;
-import cat.ohmushi.account.domain.events.AccountEvent.MoneyDepositedInAccount;
+import cat.ohmushi.account.domain.events.AccountCreated;
+import cat.ohmushi.account.domain.events.MoneyDepositedInAccount;
 import cat.ohmushi.account.domain.events.MoneyWithdrawnFromAccount;
 
 public class AccountEventTest {

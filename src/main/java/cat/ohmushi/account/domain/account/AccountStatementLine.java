@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import cat.ohmushi.account.domain.events.AccountEvent;
-import cat.ohmushi.account.domain.events.AccountEvent.MoneyDepositedInAccount;
-import cat.ohmushi.account.domain.events.AccountEvent.TransfertFailed;
+import cat.ohmushi.account.domain.events.MoneyDepositedInAccount;
 import cat.ohmushi.account.domain.events.MoneyWithdrawnFromAccount;
+import cat.ohmushi.account.domain.events.TransfertFailed;
 import cat.ohmushi.account.domain.exceptions.AccountDomainException;
 import cat.ohmushi.shared.annotations.Value;
 
