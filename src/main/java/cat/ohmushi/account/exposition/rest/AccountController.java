@@ -10,16 +10,16 @@ import cat.ohmushi.account.exposition.formatters.DefaultAccountStatementFormatte
 
 public class AccountController {
 
-    DepositMoneyInAccount deposit;
-    WithdrawMoneyFromAccount withdraw;
-    GetStatementOfAccount getStatement;
+    private final DepositMoneyInAccount deposit;
+    private final WithdrawMoneyFromAccount withdraw;
+    private final GetStatementOfAccount getStatement;
     private final AccountStatementFormatter formatter;
 
     public AccountController(
-            final DepositMoneyInAccount deposit,
-            final WithdrawMoneyFromAccount withdraw,
-            final GetStatementOfAccount getStatement,
-            final AccountStatementFormatter formatter) {
+            DepositMoneyInAccount deposit,
+            WithdrawMoneyFromAccount withdraw,
+            GetStatementOfAccount getStatement,
+            AccountStatementFormatter formatter) {
         this.deposit = deposit;
         this.withdraw = withdraw;
         this.getStatement = getStatement;
@@ -28,5 +28,5 @@ public class AccountController {
                 : formatter;
     }
 
-    // TODO
+    // TODO use a WebFramework like Spring Web, Quarkus, ...
 }

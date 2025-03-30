@@ -95,14 +95,14 @@ public class AcountTest {
     void createAccountWithNullIdOrBalanceShouldThrowException() {
         assertThatThrownBy(() -> Account.create(null, tenEuros, Currency.EUR))
                 .isInstanceOf(AccountDomainException.class)
-                .hasMessage("Account cannot have null field.");
+                .hasMessage("Id cannot be null.");
     }
 
     @Test
     void createAccountWithBalanceCurrencyDifferentThantAccountCurrencyShouldThrowException() {
         assertThatThrownBy(() -> Account.create(exampleId, tenEuros, Currency.USD))
                 .isInstanceOf(AccountDomainException.class)
-                .hasMessage("Cannot create account in USD with EUR initial balance.");
+                .hasMessage("Cannot have account in USD with EUR balance.");
     }
 
     @Test

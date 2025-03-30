@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 
 import cat.ohmushi.account.domain.events.AccountCreated;
 import cat.ohmushi.account.domain.events.AccountEvent;
@@ -26,20 +25,28 @@ public final class Account implements DomainEntityType {
 
     private Account(AccountId id, Money balance, Currency currency, List<AccountEvent> history)
             throws AccountDomainException {
-        try {
-            this.id = Objects.requireNonNull(id);
-            this.balance = Objects.requireNonNull(balance);
-            this.currency = Objects.requireNonNull(currency);
-            this.history = Objects.isNull(history)
-                    ? new ArrayList<>(List.of(new AccountCreated(id, balance, currency, LocalDateTime.now())))
-                    : history;
-        } catch (NullPointerException e) {
-            throw new AccountDomainException("Account cannot have null field.");
-        }
+        this.id = id;
+        this.balance = balance;
+        this.currency = currency;
+        this.history = Objects.isNull(history)
+                ? new ArrayList<>(List.of(new AccountCreated(id, balance, currency, LocalDateTime.now())))
+                : history;
+
+        this.validateAccount();
+    }
+
+    private void validateAccount() throws AccountDomainException {
+        AccountDomainException.requireNonNull(id, "Id cannot be null.");
+        AccountDomainException.requireNonNull(balance, "Balance cannot be null.");
+        AccountDomainException.requireNonNull(currency, "Currency cannot be null.");
 
         if (!balance.currency().equals(currency)) {
             throw new AccountDomainException(
-                    "Cannot create account in " + currency + " with " + balance.currency() + " initial balance.");
+                    "Cannot have account in " + currency + " with " + balance.currency() + " balance.");
+        }
+        if (Objects.requireNonNull(history, "History cannot be null").isEmpty()) {
+            throw new AccountDomainException(
+                    "Cannot create account with empty history.");
         }
     }
 
@@ -49,9 +56,9 @@ public final class Account implements DomainEntityType {
             throw new AccountDomainException("Cannot create an account with a strictly negative balance.");
         }
 
-        final var account = new Account(id, balance, currency, new ArrayList<>());
-        account.pushHistory(new AccountCreated(id, balance, currency, Objects.requireNonNull(creationDate)));
-
+        var creationEvent = new AccountCreated(id, balance, currency,
+                Objects.requireNonNull(creationDate, "Cannot create account without the creation date"));
+        final var account = new Account(id, balance, currency, new ArrayList<>(List.of(creationEvent)));
         return account;
     }
 
@@ -61,13 +68,8 @@ public final class Account implements DomainEntityType {
 
     public static Account fromHistory(List<AccountEvent> history) {
         if (Objects.isNull(history) || history.isEmpty()) {
-            throw new IllegalArgumentException("Cannot create Account from empty history.");
+            throw new IllegalArgumentException("Cannot replay Account from empty history.");
         }
-        // TODO should add verifications like :
-        // - first event must be AcountCreated
-        // - only one event of kind AcountCreated
-        // - ...
-        // for now it is dangerous...
 
         return history.stream()
                 .reduce(
@@ -93,19 +95,17 @@ public final class Account implements DomainEntityType {
     }
 
     public boolean currencyIs(Currency currency) {
-        return Optional.ofNullable(currency)
-                .map(c -> this.currency.equals(c))
-                .orElse(false);
+        return currency != null && this.currency.equals(currency);
     }
 
     public void deposit(Money amount, LocalDateTime date) throws AccountDomainException {
         this.ensureValidAmount(amount);
         this.ensureValidDate(date);
         this.balance = this.balance.add(amount);
-        this.pushHistory(new MoneyDepositedInAccount(amount, date));
+        this.pushInHistory(new MoneyDepositedInAccount(amount, date));
     }
 
-    public void pushHistory(AccountEvent e) {
+    public void pushInHistory(AccountEvent e) {
         if (Objects.nonNull(e)) {
             this.history.add(e);
         }
@@ -115,7 +115,7 @@ public final class Account implements DomainEntityType {
         this.ensureValidAmount(amount);
         this.ensureValidDate(date);
         this.balance = this.balance.minus(amount);
-        this.pushHistory(new MoneyWithdrawnFromAccount(amount, date));
+        this.pushInHistory(new MoneyWithdrawnFromAccount(amount, date));
     }
 
     private void ensureValidAmount(Money amount) throws AccountDomainException {
@@ -131,7 +131,7 @@ public final class Account implements DomainEntityType {
 
     private void ensureValidDate(LocalDateTime date) throws AccountDomainException {
         final var lastAppendEventDate = this.lastAppendEvent().getDate();
-        if (date.equals(lastAppendEventDate) || date.isBefore(lastAppendEventDate)) {
+        if (date.isBefore(lastAppendEventDate) || date.equals(lastAppendEventDate)) {
             throw AccountDomainException.transfert("Cannot change Account history.");
         }
     }

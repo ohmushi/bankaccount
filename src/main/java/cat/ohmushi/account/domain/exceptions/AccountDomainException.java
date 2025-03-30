@@ -11,4 +11,10 @@ public class AccountDomainException extends RuntimeException {
     public final static TransfertException transfert(String msg) {
         return new TransfertException(msg);
     }
+
+    public static <T> T requireNonNull(T obj, String message) throws AccountDomainException {
+        if (obj == null)
+            throw new AccountDomainException(message);
+        return obj;
+    }
 }

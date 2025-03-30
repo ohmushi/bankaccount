@@ -7,19 +7,17 @@ import cat.ohmushi.account.domain.account.Money;
 import cat.ohmushi.shared.annotations.Value;
 
 @Value
-public record MoneyDepositedInAccount(
-    Money deposited,
-    LocalDateTime eventDate) implements AccountEvent {
+public record MoneyDepositedInAccount(Money deposited, LocalDateTime depositedAt) implements AccountEvent {
 
   @Override
   public Account play(Account a) {
-    a.deposit(this.deposited, this.eventDate);
+    a.deposit(this.deposited, this.depositedAt);
     return a;
   }
 
   @Override
   public LocalDateTime getDate() {
-    return this.eventDate;
+    return this.depositedAt;
   }
 
 }

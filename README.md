@@ -18,11 +18,6 @@ cd bankaccount
 ```bash
 ./mvnw exec:java
 ```
-> ici utilisation de maven wrapper (mvnw)
-
-> remplacer par mvnw.cmd sur Windows
-
-> ou utiliser mvn sans le wrapper
 
 ## 🚀 Description du Problème
 
@@ -49,12 +44,34 @@ Je veux pouvoir effectuer un retrait de mon compte
 Décisions
 ```
 
+## 🔍 À voir en priorité
+### Features Cucumber (tests)
+* `test/resources`/cat/ohmushi/account/domain/ → fichiers `.feature`
+  *  Contient les scénarios BDD qui définissent le comportement attendu du système (dépôt, retrait, relevé de compte).
+* Vérifie que les règles métier sont bien respectées et testées.
+* Voir la section [BDD avec Cucumber](#bdd-avec-cucumber) pour plus d'informations.
+
+### Exemple
+* `App.java`
+* Montre un exemple d'utilisation du système par les use cases
+* Composition et injection de dépendances
+* Print dans stdout l'extrait de compte formatté
+
+### Use Cases (Cas d'utilisation)
+* `account/application/usecases/`
+  * Chaque interface représente une action clé du système (ex: DepositMoneyInAccount).
+* Voir la section [Cas d'utilisation ](#cas-dutilisation) pour plus d'informations.
+
+### Domaine
+* `account/domain/`
+  * Définit les entités principales, leurs comportements et leurs règles métier.
+* Voir la section [Domain-Driven Design (DDD)](#domain-driven-design-ddd) pour plus d'informations.
+
 ## 🏛 Architecture et principes
 
 ### Clean Architecture
 
 J'ai choisi d'implémenter une approche Clean Architecture avec un design centré sur le domaine afin de garantir que la logique métier reste indépendante des frameworks et des préoccupations externes.
-Le projet a une approche événementielle pour avoir un historique précis des actions effectuées sur le compte.
 
 ```
 src/main/java/cat/ohmushi/account
@@ -74,46 +91,28 @@ src/main/java/cat/ohmushi/account
     └───persistence
 ```
 
-Le projet suit une structure de projet qui respecte les principes de Clean Architure, c'est à dire la séparation des règles métier et le reste (exposition et persistence).
+Le découpage est le suivant :
+* application : couche d'orchestration des cas d'utilisation en appelant le domaine et en interagissant avec les autres couches (ex: services, persitence, gestion des erreurs applicatives)
+* domain : contient la logique métier, avec les entités pure encapsulant les règles métier, et les interfaces des repositories
+* exposition : gère la communication avec l'extérieur (ex: API REST)
+* infrastructure : implémente les services techniques comme la persistance des données ou l'intégration avec d'autres systèmes
 
 ### Domain-Driven Design (DDD)
 > Les règles métier sont encapsulées dans le domaine.
 
-L'architecture du projet suit les principes du Domain-Driven Design (DDD) pour garantir une séparation claire entre la logique métier et les préoccupations techniques.
+L'architecture du projet suit les principes du Domain-Driven Design (DDD) pour structurer le code autour du domaine métier, faciliter une séparation des responsabilités et assurer la maintenabilité et la flexibilité de l'application.
 
 * Le dossier `domain` contient les modèles métier, les événements et les exceptions propres au domaine bancaire
 * L’application ne dépend pas de framework : les règles métier sont autonomes et peuvent être testées indépendamment de l’infrastructure
-* Le cœur du métier est isolé des détails d’implémentation comme la base de données ou l’exposition (api REST par exemple)
+* Le cœur du métier est isolé des détails d’implémentation comme la base de données ou l’exposition
 
 Exemples dans le projet :
 
-* domain/account/Account.java définit un compte bancaire avec son identifiant, son solde et ses opérations.
+* domain/account/Account.java définit un compte bancaire avec son identifiant, son solde et ses opérations
 
-* domain/account/Money.java encapsule la logique de manipulation de montants en devises.
+* domain/account/Money.java encapsule la logique de manipulation de montants en devises
 
 Grâce à cette approche, l'application reste modulaire, testable et évolutive, car les modifications du métier n’impactent pas la couche technique et inversement.
-
-### Event Driven
-
-#### Pourquoi une approche événementielle ?
-
-La gestion d'évènements dans l'entité Account permet d'avoir un historique précis des actions effectuées sur le compte.
-
-Par exemple l'événement pour un dépôt d’argent :
-
-```java
-domain/events/AccountEvent.java
-
-record MoneyDepositedInAccount(
-            Money deposited,
-            LocalDateTime eventDate,
-            Money newBalance) implements AccountEvent 
-    { 
-        // ... 
-    }
-```
-
-Dans un système plus avancé, ces événements pourraient être publiés dans un bus d’événements pour être traités de manière asynchrone, par exemple avec **Kafka** ou RabbitMQ (ou un bus en mémoire).
 
 ### Cas d'utilisation 
 
@@ -151,7 +150,7 @@ Les erreurs applicatives relèvent plus d'une opération dans un service qui ne 
 ### BDD avec Cucumber
 
 J'ai utilisé Cucumber pour le développement piloté par le comportement (BDD).
-Les 3 fonctionnalités principales, Dépôt, Retrait, Relevé ont des fichier `feature` qui sont des tests écrits Gherkin (en langage naturel : given → when → then).
+Les 3 fonctionnalités principales, Dépôt, Retrait, Relevé ont des fichier `feature` faisant office de tests écrits Gherkin (en langage naturel : given → when → then) validé ensuite par Junit et AssertJ.
 Ces features garantissent que les règles métier sont bien définies et testées du point de vue de l'utilisateur final.
 
 Les features ressemblent par exemple à :
@@ -174,31 +173,14 @@ JUnit & AssertJ sont utilisés pour les tests unitaires afin de garantir la fiab
 
 ## 💡 Décisions Techniques & Justifications
 
-### Java 21
-
-L’utilisation de Java est utilisé depuis plus de 25 ans dans des applications critiques comme la finance, la banque et l’industrie pour différentes raisons :
-
-* 1️⃣ Sécurité et fiabilité → essentiel pour une application bancaire
-* 2️⃣ Support à long terme → stabilité assurée sur plusieurs années
-* 2️⃣ Écosystème riche → outils et frameworks adaptés aux besoins métiers
-* 3️⃣ Performance et scalabilité → optimisé pour les charges lourdes et multi-threading
-* 4️⃣ Portabilité et interopérabilité → compatible avec de nombreux systèmes
-
-La version 21 est la dernière LTS (Long-Term Support) à ce jour (mars 2025), ce qui garantit un support à long terme avec des mises à jour de sécurité et de stabilité, et permet d’éviter les migrations fréquentes vers de nouvelles versions.
-
-### Clean Architecture
-
-#### Avantages
-
-* ✔ Séparation claire des préoccupations, rendant le système plus facile à maintenir et à faire évoluer.
-* ✔ La logique métier reste indépendante des frameworks et de l'infrastructure, assurant une adaptabilité à long terme.
-* ✔ Gestion robuste des erreurs pour éviter les défaillances silencieuses et assurer la fiabilité du système.
-* ✔ Stratégie de test bien définie pour garantir le bon fonctionnement et le comportement attendu du système.
-
-#### Inconvénients
-
-* ⚠ L'architecture Clean ajoute une certaine complexité dans la structuration du projet.
-* ⚠ L'utilisation d'exceptions personnalisées et de types optionnels nécessite un effort supplémentaire en gestion.
+| Choix                                                     | Avantages                                                                                | Désavantages                                                                            |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Java 21**                                               | S'inscrit bien dans le domaine bancaire, dernière version LTS, stabilité                 |                                                                                         |
+| **Clean Architecture**                                    | Séparation claire des préoccupations, facilite la maintenance et l'évolution du projet   | Complexité accrue, nécessite plus de couches et de classes                              |
+| **Domain-Driven Design (DDD)**                            | Encapsule les règles métier, facilite leur écriture et leur lecture                      | Demande un effort initial important pour bien structurer le domaine                     |
+| **Tests BDD avec Cucumber**                               | Vérifie le respect des règles métier du point de vue utilisateur  (Gherkin)              | Demande un bon maintien des scénarios                                                   |
+| **Tests unitaires avec JUnit & AssertJ**                  | Garantit la fiabilité des composants métier avec une approche TDD                        |                                                                                         |
+| **Gestion des erreurs via exceptions personnalisées**     | Meilleure lisibilité et contrôle des erreurs spécifiques au domaine et à l’application   | Multiplication des exceptions qui implique une complexification de leur gestion         |
 
 ## 🎯 Améliorations Futures
 * Implementation complète d'une API REST

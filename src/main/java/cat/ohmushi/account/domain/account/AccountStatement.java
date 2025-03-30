@@ -20,7 +20,7 @@ public class AccountStatement {
     public List<AccountStatementLine> lines() {
         return this.historyOfAccountStates()
                 .map(AccountStatementLine::fromAccountState)
-                .filter(Optional::isPresent).map(Optional::get)
+                .flatMap(Optional::stream) // ignore empty values
                 .toList();
     }
 

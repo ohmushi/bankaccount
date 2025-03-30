@@ -10,6 +10,8 @@ import cat.ohmushi.account.domain.account.Currency;
 
 public class DefaultAccountStatementFormatter implements AccountStatementFormatter {
 
+    private static int columnWidth = 15;
+
     @Override
     public String format(AccountStatement statement) {
         var head = Stream.of(List.of("Date", "Operation", "Amount", "Balance"))
@@ -27,9 +29,41 @@ public class DefaultAccountStatementFormatter implements AccountStatementFormatt
     }
 
     private List<String> formatLineValues(AccountStatementLine l) {
-        String date = String.format("%02d/%02d/%4d", l.date().getMonthValue(), l.date().getDayOfMonth(),
+        String date = formatDate(l);
+        String amountSign = getAmountSign(l);
+        String balanceSign = getBalanceSign(l);
+        String currency = getCurrency(l);
+
+        String amount = amountSign + currency + l.amount().amount().abs().intValue();
+        String balance = balanceSign + currency + l.balance().amount().abs().intValue();
+
+        return List.of(date, l.operation(), amount, balance);
+    }
+
+    private String formatDate(AccountStatementLine l) {
+        return String.format("%02d/%02d/%4d", l.date().getMonthValue(), l.date().getDayOfMonth(),
                 l.date().getYear());
-        String amountSign = switch (l.operation()) {
+    }
+
+    private String getCurrency(AccountStatementLine l) {
+        return switch (l.balance().currency()) {
+            case Currency.EUR -> "€";
+            case Currency.USD -> "$";
+            default -> "";
+        };
+    }
+
+    private String getBalanceSign(AccountStatementLine l) {
+        return switch (l.balance().amount().signum()) {
+            case -1 ->
+                "-";
+            default ->
+                "";
+        };
+    }
+
+    private String getAmountSign(AccountStatementLine l) {
+        return switch (l.operation()) {
             case "Deposit" ->
                 "+";
             case "Withdrawal" ->
@@ -37,27 +71,10 @@ public class DefaultAccountStatementFormatter implements AccountStatementFormatt
             default ->
                 "";
         };
-
-        String balanceSign = switch (l.balance().amount().signum()) {
-            case -1 ->
-                "-";
-            default ->
-                "";
-        };
-
-        String currency = switch (l.balance().currency()) {
-            case Currency.EUR -> "€";
-            case Currency.USD -> "$";
-            default -> "";
-        };
-
-        String amount = amountSign + currency + l.amount().amount().abs().intValue();
-        String balance = balanceSign + currency + l.balance().amount().abs().intValue();
-        return List.of(date, l.operation(), amount, balance);
     }
 
     private List<String> addPaddingBetweenValues(List<String> lineValues) {
-        return lineValues.stream().map(w -> String.format("%-15s", w)).toList();
+        return lineValues.stream().map(w -> String.format("%-" + columnWidth + "s", w)).toList();
     }
 
     private String joinLineValues(List<String> lineValues) {
