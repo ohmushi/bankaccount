@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import cat.ohmushi.account.application.exceptions.AccountApplicationException;
 import cat.ohmushi.account.application.exceptions.AccountApplicationException.AccountNotFoundException;
+import cat.ohmushi.account.application.exceptions.AccountApplicationException.AccountTransfertException;
 import cat.ohmushi.account.application.usecases.DepositMoneyInAccount;
 import cat.ohmushi.account.application.usecases.GetStatementOfAccount;
 import cat.ohmushi.account.application.usecases.WithdrawMoneyFromAccount;
@@ -43,11 +44,13 @@ public class AccountService implements
 
         try {
             account.withdraw(money, now);
+            this.accounts.save(account);
         } catch (AccountDomainException e) {
             account.pushInHistory(new TransfertFailed(e, now, account.balance()));
+            this.accounts.save(account);
+            throw new AccountTransfertException(e);
         }
 
-        this.accounts.save(account);
     }
 
     @Override
@@ -59,11 +62,12 @@ public class AccountService implements
 
         try {
             account.deposit(money, now);
+            this.accounts.save(account);
         } catch (AccountDomainException e) {
             account.pushInHistory(new TransfertFailed(e, now, account.balance()));
+            this.accounts.save(account);
+            throw new AccountTransfertException(e);
         }
-
-        this.accounts.save(account);
     }
 
     @Override
