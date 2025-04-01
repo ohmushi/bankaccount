@@ -1,10 +1,10 @@
 package cat.ohmushi.account.domain;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
-
-import static java.time.LocalDateTime.now;
+import java.time.ZoneId;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,7 +30,11 @@ public class StepDefinitions {
     private Exception exception;
     private AccountStatement statement;
     private AccountStatementFormatter formatter = new DefaultAccountStatementFormatter();
-    private final static LocalDateTime accountCreationTime = LocalDateTime.of(2025, Month.JANUARY, 1, 0, 0, 0, 0);
+    private final static Instant accountCreationTime = LocalDateTime
+            .of(2025, Month.JANUARY, 1, 0, 0, 0, 0)
+            .atZone(ZoneId.systemDefault())
+            .toInstant();
+
 
     @ParameterType("([-+]?)([€$])(\\d+)")
     public Money money(String negative, String c, String a) throws Exception {
@@ -62,13 +66,15 @@ public class StepDefinitions {
     }
 
     @ParameterType("(\\d{2})\\/(\\d{2})\\/(\\d{4})")
-    public LocalDateTime date(String month, String day, String year) {
-        var now = now();
+    public Instant date(String month, String day, String year) {
+        var now = LocalDateTime.now();
         return LocalDateTime.of(
                 Integer.parseInt(year),
                 Integer.parseInt(month),
                 Integer.parseInt(day),
-                now.getHour(), now.getMinute(), now.getSecond(), now.getNano());
+                now.getHour(), now.getMinute(), now.getSecond(), now.getNano())
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
     }
 
     @Given("an account with a(n initial) balance of {money}")
@@ -81,7 +87,7 @@ public class StepDefinitions {
     }
 
     @Given("a {action} of {money} on {date}")
-    public void a_deposit_or_withdraw_on_date(String action, Money amount, LocalDateTime ondate) {
+    public void a_deposit_or_withdraw_on_date(String action, Money amount, Instant ondate) {
         switch (action) {
             case "deposit" ->
                 this.account.deposit(amount, ondate);
@@ -106,9 +112,9 @@ public class StepDefinitions {
     public void I_deposit_or_withdraw(String action, Money amount) {
         switch (action) {
             case "deposit" ->
-                this.account.deposit(amount, now());
+                this.account.deposit(amount, Instant.now());
             case "withdraw" ->
-                this.account.withdraw(amount, now());
+                this.account.withdraw(amount, Instant.now());
         }
     }
 

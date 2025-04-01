@@ -1,8 +1,8 @@
 package cat.ohmushi.account.domain.account;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import static java.time.LocalDateTime.now;
+import java.time.Instant;
+import static java.time.Instant.now;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -123,12 +123,12 @@ public class AcountTest {
     void ensureGetLastAppendEventIsTheLastest() {
         accountWithTenEuros.deposit(tenEuros, now());
         var withdrawTime = now();
-        accountWithTenEuros.withdraw(Money.of(3, Currency.EUR).get(), LocalDateTime.from(withdrawTime));
+        accountWithTenEuros.withdraw(Money.of(3, Currency.EUR).get(), Instant.from(withdrawTime));
 
         assertThat(accountWithTenEuros.lastAppendEvent())
                 .isEqualTo(new MoneyWithdrawnFromAccount(
                         Money.of(3, Currency.EUR).get(),
-                        LocalDateTime.from(withdrawTime)));
+                        Instant.from(withdrawTime)));
     }
 
     @Test

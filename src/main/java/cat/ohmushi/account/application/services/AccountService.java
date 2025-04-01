@@ -1,7 +1,7 @@
 package cat.ohmushi.account.application.services;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 import cat.ohmushi.account.application.exceptions.AccountApplicationException;
@@ -40,7 +40,7 @@ public class AccountService implements
         Account account = this.getAccount(accountId);
         Money money = Money.of(amount, account.currency())
                 .orElseThrow(() -> new AccountApplicationException("Invalid money " + String.valueOf(amount)));
-        var now = LocalDateTime.now();
+        var now = Instant.now();
 
         try {
             account.withdraw(money, now);
@@ -58,7 +58,7 @@ public class AccountService implements
         Account account = this.getAccount(accountId);
         Money money = Money.of(amount, account.currency())
                 .orElseThrow(() -> new AccountApplicationException("Invalid money " + String.valueOf(amount)));
-        var now = LocalDateTime.now();
+        var now = Instant.now();
 
         try {
             account.deposit(money, now);

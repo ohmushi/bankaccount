@@ -1,5 +1,6 @@
 package cat.ohmushi.account.domain.account;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +30,7 @@ public final class Account implements DomainEntityType {
         this.balance = balance;
         this.currency = currency;
         this.history = Objects.isNull(history)
-                ? new ArrayList<>(List.of(new AccountCreated(id, balance, currency, LocalDateTime.now())))
+                ? new ArrayList<>(List.of(new AccountCreated(id, balance, currency, Instant.now())))
                 : history;
 
         this.validateAccount();
@@ -50,7 +51,7 @@ public final class Account implements DomainEntityType {
         }
     }
 
-    public static Account create(AccountId id, Money balance, Currency currency, LocalDateTime creationDate)
+    public static Account create(AccountId id, Money balance, Currency currency, Instant creationDate)
             throws AccountDomainException {
         if (!balance.isZeroOrPositive()) {
             throw new AccountDomainException("Cannot create an account with a strictly negative balance.");
@@ -63,7 +64,7 @@ public final class Account implements DomainEntityType {
     }
 
     public static Account create(AccountId id, Money balance, Currency currency) {
-        return create(id, balance, currency, LocalDateTime.now());
+        return create(id, balance, currency, Instant.now());
     }
 
     public static Account fromHistory(List<AccountEvent> history) {
@@ -98,7 +99,7 @@ public final class Account implements DomainEntityType {
         return currency != null && this.currency.equals(currency);
     }
 
-    public void deposit(Money amount, LocalDateTime date) throws AccountDomainException {
+    public void deposit(Money amount, Instant date) throws AccountDomainException {
         this.ensureValidAmount(amount);
         this.ensureValidDate(date);
         this.balance = this.balance.add(amount);
@@ -111,7 +112,7 @@ public final class Account implements DomainEntityType {
         }
     }
 
-    public void withdraw(Money amount, LocalDateTime date) throws AccountDomainException {
+    public void withdraw(Money amount, Instant date) throws AccountDomainException {
         this.ensureValidAmount(amount);
         this.ensureValidDate(date);
         this.balance = this.balance.minus(amount);
@@ -129,7 +130,7 @@ public final class Account implements DomainEntityType {
         }
     }
 
-    private void ensureValidDate(LocalDateTime date) throws AccountDomainException {
+    private void ensureValidDate(Instant date) throws AccountDomainException {
         final var lastAppendEventDate = this.lastAppendEvent().getDate();
         if (date.isBefore(lastAppendEventDate) || date.equals(lastAppendEventDate)) {
             throw AccountDomainException.transfert("Cannot change Account history.");

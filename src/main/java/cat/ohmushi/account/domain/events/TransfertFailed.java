@@ -1,6 +1,6 @@
 package cat.ohmushi.account.domain.events;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import cat.ohmushi.account.domain.account.Account;
 import cat.ohmushi.account.domain.exceptions.AccountDomainException;
@@ -9,7 +9,7 @@ import cat.ohmushi.shared.annotations.Value;
 @Value
 public record TransfertFailed(
         AccountDomainException reason,
-        LocalDateTime eventDate) implements AccountEvent {
+        Instant eventDate) implements AccountEvent {
 
     @Override
     public Account play(Account a) {
@@ -17,7 +17,7 @@ public record TransfertFailed(
     }
 
     @Override
-    public LocalDateTime getDate() {
+    public Instant getDate() {
         return this.eventDate;
     }
 }

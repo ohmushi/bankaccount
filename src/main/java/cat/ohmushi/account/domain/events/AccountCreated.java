@@ -1,5 +1,6 @@
 package cat.ohmushi.account.domain.events;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 import cat.ohmushi.account.domain.account.Account;
@@ -13,7 +14,7 @@ public record AccountCreated(
     AccountId id,
     Money balance,
     Currency currency,
-    LocalDateTime creationDate) implements AccountEvent {
+    Instant creationDate) implements AccountEvent {
 
   @Override
   public Account play(Account a) {
@@ -21,7 +22,7 @@ public record AccountCreated(
   }
 
   @Override
-  public LocalDateTime getDate() {
+  public Instant getDate() {
     return this.creationDate;
   }
 }

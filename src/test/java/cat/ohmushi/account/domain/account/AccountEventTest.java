@@ -1,7 +1,7 @@
 package cat.ohmushi.account.domain.account;
 
-import java.time.LocalDateTime;
-import static java.time.LocalDateTime.now;
+import java.time.Instant;
+import static java.time.Instant.now;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
@@ -17,7 +17,7 @@ public class AccountEventTest {
   private final static Money zeroEuro = Money.of(0, Currency.EUR).get();
   private final static Money tenEuro = Money.of(10, Currency.EUR).get();
   private final static RecursiveComparisonConfiguration ignoreDates = RecursiveComparisonConfiguration.builder()
-      .withIgnoredFieldsOfTypes(LocalDateTime.class)
+      .withIgnoredFieldsOfTypes(Instant.class)
       .build();
 
   @Test

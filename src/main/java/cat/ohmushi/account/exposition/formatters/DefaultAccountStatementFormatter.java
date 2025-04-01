@@ -1,5 +1,6 @@
 package cat.ohmushi.account.exposition.formatters;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,8 +42,8 @@ public class DefaultAccountStatementFormatter implements AccountStatementFormatt
     }
 
     private String formatDate(AccountStatementLine l) {
-        return String.format("%02d/%02d/%4d", l.date().getMonthValue(), l.date().getDayOfMonth(),
-                l.date().getYear());
+        var date = l.date().atZone(ZoneId.systemDefault()).toLocalDate();
+        return String.format("%02d/%02d/%4d", date.getMonthValue(), date.getDayOfMonth(), date.getYear());
     }
 
     private String getCurrency(AccountStatementLine l) {

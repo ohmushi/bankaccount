@@ -1,6 +1,6 @@
 package cat.ohmushi.account.domain.account;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 
 import cat.ohmushi.account.domain.events.AccountEvent;
@@ -12,7 +12,7 @@ import cat.ohmushi.shared.annotations.Value;
 
 @Value
 public record AccountStatementLine(
-        LocalDateTime date,
+        Instant date,
         String operation,
         Money amount,
         Money balance,

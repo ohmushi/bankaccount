@@ -1,7 +1,7 @@
 package cat.ohmushi.account.application.services;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -141,9 +141,9 @@ public class AccountServiceTest {
     @Test
     void shouldGetStatement() {
         List<AccountEvent> history = List.of(
-                new AccountCreated(AccountId.of("111").get(), Money.of(0, EUR).get(), EUR, LocalDateTime.now()),
-                new MoneyDepositedInAccount(Money.of(10, EUR).get(), LocalDateTime.now()),
-                new MoneyWithdrawnFromAccount(Money.of(5, EUR).get(), LocalDateTime.now())
+                new AccountCreated(AccountId.of("111").get(), Money.of(0, EUR).get(), EUR, Instant.now()),
+                new MoneyDepositedInAccount(Money.of(10, EUR).get(), Instant.now()),
+                new MoneyWithdrawnFromAccount(Money.of(5, EUR).get(), Instant.now())
         );
         var account = Account.fromHistory(history);
 
