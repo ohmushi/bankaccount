@@ -33,6 +33,5 @@ public class App {
         withdrawMoneyFromAccount.withdraw("myIBAN", BigDecimal.valueOf(20));
 
         System.out.println(formatter.format(getStatementOfAccount.getStatement("myIBAN")));
-
     }
 }

@@ -46,7 +46,7 @@ public class AccountService implements
             account.withdraw(money, now);
             this.accounts.save(account);
         } catch (AccountDomainException e) {
-            account.pushInHistory(new TransfertFailed(e, now, account.balance()));
+            account.pushInHistory(new TransfertFailed(e, now));
             this.accounts.save(account);
             throw new AccountTransfertException(e);
         }
@@ -64,7 +64,7 @@ public class AccountService implements
             account.deposit(money, now);
             this.accounts.save(account);
         } catch (AccountDomainException e) {
-            account.pushInHistory(new TransfertFailed(e, now, account.balance()));
+            account.pushInHistory(new TransfertFailed(e, now));
             this.accounts.save(account);
             throw new AccountTransfertException(e);
         }
