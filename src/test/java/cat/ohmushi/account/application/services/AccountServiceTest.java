@@ -142,8 +142,8 @@ public class AccountServiceTest {
     void shouldGetStatement() {
         List<AccountEvent> history = List.of(
                 new AccountCreated(AccountId.of("111").get(), Money.of(0, EUR).get(), EUR, Instant.now()),
-                new MoneyDepositedInAccount(Money.of(10, EUR).get(), Instant.now()),
-                new MoneyWithdrawnFromAccount(Money.of(5, EUR).get(), Instant.now())
+                new MoneyDepositedInAccount(Money.of(10, EUR).get(), Instant.now().plusNanos(1)),
+                new MoneyWithdrawnFromAccount(Money.of(5, EUR).get(), Instant.now().plusNanos(2))
         );
         var account = Account.fromHistory(history);
 

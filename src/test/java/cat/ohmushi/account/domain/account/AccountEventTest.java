@@ -32,7 +32,7 @@ public class AccountEventTest {
   @Test
   void depositedInAccountShouldHaveCreationEventAndDepositedEvent() {
     var account = Account.create(id, zeroEuro, Currency.EUR);
-    account.deposit(tenEuro, now());
+    account.deposit(tenEuro, now().plusNanos(1));
 
     assertThat(account.history())
         .usingRecursiveFieldByFieldElementComparator(ignoreDates)
@@ -44,8 +44,8 @@ public class AccountEventTest {
   @Test
   void withdrawFromAccountShouldHaveWithdrawnEvent() {
     var account = Account.create(id, zeroEuro, Currency.EUR);
-    account.deposit(tenEuro, now());
-    account.withdraw(tenEuro, now());
+    account.deposit(tenEuro, now().plusNanos(1));
+    account.withdraw(tenEuro, now().plusNanos(2));
 
     assertThat(account.history())
         .usingRecursiveFieldByFieldElementComparator(ignoreDates)

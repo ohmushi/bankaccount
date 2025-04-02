@@ -51,13 +51,13 @@ public class AcountTest {
 
     @Test
     void shoulDepositMoneyInAccount() {
-        accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(25), Currency.EUR).get(), now());
+        accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(25), Currency.EUR).get(), now().plusNanos(1));
         assertThat(accountWithTenEuros.balance().amount()).isEqualTo(BigDecimal.valueOf(10 + 25));
     }
 
     @Test
     void shoulNotDepositZero() {
-        assertThatThrownBy(() -> accountWithTenEuros.deposit(zeroEuros, now()))
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(zeroEuros, now().plusNanos(1)))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
@@ -65,20 +65,20 @@ public class AcountTest {
     @Test
     void shoulNotDepositStrictlyNegativeAmount() {
         assertThatThrownBy(
-                () -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now()))
+                () -> accountWithTenEuros.deposit(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now().plusNanos(1)))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
 
     @Test
     void shoulWithdraw() {
-        accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(25), Currency.EUR).get(), now());
+        accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(25), Currency.EUR).get(), now().plusNanos(1));
         assertThat(accountWithTenEuros.balance().amount()).isEqualTo(BigDecimal.valueOf(-15));
     }
 
     @Test
     void shoulNotWithdrawZero() {
-        assertThatThrownBy(() -> accountWithTenEuros.withdraw(zeroEuros, now()))
+        assertThatThrownBy(() -> accountWithTenEuros.withdraw(zeroEuros, now().plusNanos(1)))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
@@ -86,7 +86,7 @@ public class AcountTest {
     @Test
     void shoulNotWithdrawStrictlyNegativeAmount() {
         assertThatThrownBy(
-                () -> accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now()))
+                () -> accountWithTenEuros.withdraw(Money.of(BigDecimal.valueOf(-1), Currency.EUR).get(), now().plusNanos(1)))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Money transferred cannot be negative.");
     }
@@ -107,22 +107,22 @@ public class AcountTest {
 
     @Test
     void depositDollarsToEuroAccountShouldThrowExcention() {
-        assertThatThrownBy(() -> accountWithTenEuros.deposit(tenDollars, now()))
+        assertThatThrownBy(() -> accountWithTenEuros.deposit(tenDollars, now().plusNanos(1)))
                 .isInstanceOf(TransfertException.class)
                 .hasMessage("Cannot transfert USD to EUR account.");
     }
 
     @Test
     void withdrawDollarsToEuroAccountShouldThrowExcention() {
-        assertThatThrownBy(() -> accountWithTenEuros.withdraw(tenDollars, now()))
-                .isInstanceOf(TransfertException.class)
+        assertThatThrownBy(() -> accountWithTenEuros.withdraw(tenDollars, now().plusNanos(1)))
+                    .isInstanceOf(TransfertException.class)
                 .hasMessage("Cannot transfert USD to EUR account.");
     }
 
     @Test
     void ensureGetLastAppendEventIsTheLastest() {
-        accountWithTenEuros.deposit(tenEuros, now());
-        var withdrawTime = now();
+        accountWithTenEuros.deposit(tenEuros, now().plusNanos(1));
+        var withdrawTime = now().plusNanos(2);
         accountWithTenEuros.withdraw(Money.of(3, Currency.EUR).get(), Instant.from(withdrawTime));
 
         assertThat(accountWithTenEuros.lastAppendEvent())
